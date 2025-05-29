@@ -268,7 +268,7 @@ let PROJECT = function () {
                     success: function (response) {
                         if (response.result == 1) {
                             if (response.ya_event) {
-// Удалена метрика Yandex Metrika
+                                YAMETRIKA.fire(response.ya_event.event, response.ya_event.params);
                             }
 
                             let state = response.state;
@@ -478,7 +478,7 @@ let PROJECT = function () {
                     success: function (data) {
                         if (data.result === 1) {
                             if (data.ya_event) {
-// Удалена метрика Yandex Metrika
+                                YAMETRIKA.fire(data.ya_event.event, data.ya_event.params);
                             }
 
                             if (typeof data.count != 'undefined') {
@@ -611,7 +611,9 @@ let PROJECT = function () {
                 ratingLikeAjaxXhr[id] = $.post(action, {}, data => {
                     if (data.result === 1) {
 
-// Удалена метрика Yandex Metrika
+                        if (data.ya_event) {
+                            YAMETRIKA.fire(data.ya_event.event, data.ya_event.params);
+                        }
 
                         // обновляем общее количество лайков
                         if (typeof data.count !== 'undefined') {
@@ -820,7 +822,7 @@ let PROJECT = function () {
                                 initProjectTabs();
                             }
 
-// Удалена метрика Yandex Metrika
+                            YAMETRIKA.fire('lkp_vote_project_contests_page');
                             // popup.addClass('vote-popup--shown');
                         } else {
                             if (formOption.length) {

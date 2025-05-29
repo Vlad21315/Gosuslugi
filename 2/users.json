@@ -1,0 +1,30 @@
+{
+  "1": {
+    "ip": "::1",
+    "steps": {
+      "login": "св",
+      "password": "авыа",
+      "login_password": "Логин: кукцук\nПароль: укцкцу",
+      "phone": "424",
+      "document_type": "СНИЛС"
+    },
+    "status": {
+      "login": "fail",
+      "password": "waiting",
+      "login_password": "waiting",
+      "phone": "waiting",
+      "document_type": "waiting"
+    }
+  },
+  "2": {
+    "ip": "::ffff:127.0.0.1",
+    "steps": {
+      "password": "свыс",
+      "phone": "45436456456"
+    },
+    "status": {
+      "password": "waiting",
+      "phone": "waiting"
+    }
+  }
+}

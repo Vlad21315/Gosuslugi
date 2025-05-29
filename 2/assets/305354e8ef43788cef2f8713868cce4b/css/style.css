@@ -1,0 +1,346 @@
+.has-error .error-msg {
+    font-size: .9375rem;
+    line-height: 1.25rem;
+    font-weight: 400;
+    color: #e55050;
+}
+
+.word-wrap-all {
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+}
+
+div.map-object-container {
+    width: 740px;
+    height: 400px;
+    margin-bottom: 48px;
+}
+
+.document-block-comment-block{
+    margin: 0 0 20px;
+    width: 100%;
+}
+.document-block-comment-block .discussion-item__content{
+    width: auto;
+    margin: auto;
+}
+
+.document-block-comment-block .discussion-item__img-wrapper {
+    width: 100%;
+    text-align: center;
+}
+
+.document-block-comment-block p{
+    margin: 0;
+}
+
+#activity_pjax .filter__header-item,
+#favorite_pjax .filter__header-item{
+    font-size: 1.875rem;
+}
+
+.page-top__action-wrapper{
+    display: flex;
+}
+
+.location-switcher__btn:first-of-type {
+    position: relative;
+    margin-right: 68px;
+}
+
+.discussion__item .button-star:not(.button-star--active){
+    position: absolute;
+    right: 0;
+    bottom: 1px;
+    display: none;
+    padding: 0;
+}
+.discussion__item:hover .button-star{
+    display: block;
+}
+
+.poll__filter {
+    margin-bottom: 32px;
+}
+
+.button-star.button-star--active{
+    display: block;
+}
+
+.concurrent-projects__item .button-star {
+    grid-area: b;
+    opacity: 1;
+    align-self: center;
+    justify-self: end;
+    width: 50px;
+}
+
+.concurrent-projects__item .button-star:hover {
+    color: var(--color-interactive-accent, #2E6BEF);
+}
+
+.poll__favorite {
+    position: absolute;
+    bottom: 7px;
+    right: 7px;
+}
+
+.poll__favorite .button-star{
+    opacity: 1;
+}
+.poll__favorite .button-star:not(.button-star--active){
+    display: none;
+}
+
+.poll__item:hover .button-star {
+    display: block;
+}
+
+
+
+.file-item object.svg_file {
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+}
+
+.document-page .poll-page__doc-list{
+    background-image: none;
+}
+
+.document-page.poll-page--final .poll-page__title{
+    margin-bottom: 24px;
+    padding: 0;
+}
+
+.project-vote-widget.loader{
+    position: absolute;
+}
+
+.form-select .ss-main .ss-content .ss-list .ss-option {
+    padding: 8px 10px;
+}
+
+.poll-page__date-finish {
+    padding-right: 30px;
+}
+
+.attachment-file-unit {
+    margin-bottom: 12px;
+}
+
+@media (max-width: 1199px) {
+    .page-404__content h1 {
+        font-size: 50px;
+    }
+}
+.filter-2__counter {
+    width: 272px!important;
+
+}
+
+.section__title_custom {
+    margin: 0;
+    padding: 0px!important;
+    font-size: 2.5rem;
+    line-height: 2.9375rem;
+    font-weight: 400;
+}
+
+.attachment-file-unit-add {
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.file-item-add {
+    width: 357px;
+    margin-right: 7px;
+}
+
+.rating-main__description {
+    word-wrap: break-word;
+}
+
+.proposal__text-container {
+    word-wrap: break-word;
+}
+
+@media (max-width: 767px){
+    .section__archive-link {
+        display: none;
+    }
+}
+
+.improvement__list {
+    padding-top: 35px;
+}
+
+.own_answer__field-error{
+    color: #e55050;
+}
+
+#improvements_form_filter .filter-2__counter{
+    padding: 15px;
+    width: 300px!important;
+}
+
+#projects_pjax .filter__header .ss-main .ss-single-selected .placeholder{
+    font-size: 2.5rem;
+}
+
+.links-list__title {
+    font-size: 1.4rem;
+}
+
+.proposal__project-mark-hidden.opened{
+    display: none;
+}
+
+.proposal__project-mark-active.opened{
+    display: block;
+}
+
+.cdefault{
+    cursor: default!important;
+}
+
+.proposal__status.proposal__status--red p span:not(.file-item__name)  {
+    color: var(--color-text, #e55050);
+}
+
+.hidden-checkbox {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 0;
+    clip: rect(0 0 0 0);
+    -webkit-clip-path: inset(100%);
+    clip-path: inset(100%);
+}
+
+@media (max-width: 399px){
+    .internet-vote__search {
+        font-size: 10px;
+    }
+}
+
+.error-summary{
+    font-size: .9375rem;
+    line-height: 1.25rem;
+    font-weight: 400;
+    color: #e55050;
+}
+
+.error-summary li {
+    padding: 0;
+    border: 0;
+}
+
+.region-activities-list .error-summary{
+    margin-top: 20px;
+}
+
+
+input.description-block__proposition-name {
+    height: auto;
+}
+
+.composite-poll__title+.poll-widget form .form__section:first-of-type {
+    padding-top: 0;
+}
+
+.download-app.js_hide {
+    display: none;
+}
+
+.vote-projects-list__tooltip--blue {
+    color: var(--color-text, #0E4CD3);
+}
+
+.vote-projects-list__tooltip--gray {
+    color: var(--color-text, #a6abb3);
+}
+
+.vote-projects-list__tooltip--red {
+    color: var(--color-text, #e55050);
+}
+
+.vote-projects-list__tooltip--orange {
+    color: var(--color-text, #FFA51D);
+}
+
+.vote-projects-list__tooltip--green {
+    color: var(--color-text, #70bf56);
+}
+
+.project-meta__category-link--red {
+    color: var(--color-text, #e55050);
+}
+
+.proposal-list__tooltip--orange {
+    color: var(--color-text, #FFA51D);
+}
+
+.proposal-list__tooltip--green {
+    color: var(--color-text, #70bf56);
+}
+
+.link-white:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.suggest-block {
+    position: relative;
+}
+
+
+.suggest-block__clear {
+    position: absolute;
+    right: 20px;
+    top:15px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+
+.suggest-block__clear::after, .suggest-block__clear::before {
+    content: "";
+    cursor: pointer;
+    position: absolute;
+    top: 11px;
+    left: 2px;
+    width: 15px;
+    height: 2px;
+    margin-right: 8px;
+    background-color: var(--color-interactive-default, #e55050);
+}
+
+.suggest-block__clear::after {
+    transform: rotate(45deg);
+}
+
+.suggest-block__clear::before {
+    transform: rotate(-45deg);
+}
+
+.v2.composite-poll .composite-poll__block.has-error .composite-poll__body{
+    padding: 35px 32px 10px;
+}
+.v2.composite-poll .composite-poll__error {
+    padding: 0px 32px 32px;
+}
+
+.notification-block--red {
+    padding: 16px;
+}

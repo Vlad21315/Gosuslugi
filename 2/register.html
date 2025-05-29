@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Госуслуги — Регистрация</title>
+  <link rel="icon" href="favicon.ico">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #e4ecfd;
+      font-family: 'Lato', Arial, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0;
+    }
+    .login-container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #b3c6e6aa;
+      max-width: 382px;
+      width: 100%;
+      margin: 46px 0 0 0;
+      padding: 60px 32px 0px 32px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative; /* Добавлено для позиционирования кнопки Назад */
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 43px auto;
+      width: 194px;
+      height: 34px;
+      line-height: 1;
+    }
+    .input {
+      width: 100%;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      border: none;
+      background: #f5f7fa;
+      padding: 16px 18px;
+      font-size: 16px;
+      outline: none;
+      box-sizing: border-box;
+      transition: border 0.2s;
+    }
+    .input:focus {
+      border: 2px solid #99b1e6;
+      background: #fff;
+    }
+    .first-input {
+      margin-top: 0;
+      margin-bottom: 21px;
+      display: block;
+      line-height: 1;
+    }
+    .restore {
+      width: 100%;
+      text-align: left;
+      color: #0d4cd3;
+      font-size: 16px;
+      margin-bottom: 42px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .login-btn {
+      width: 100%;
+      background: #0d4cd3;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 16px 0;
+      font-size: 16px;
+      font-weight: 400;
+      cursor: pointer;
+      margin-bottom: 36px;
+      transition: background 0.2s;
+    }
+    .login-btn:hover {
+      background: #0b3bb3;
+    }
+    .help-link {
+      background: none;
+      border: none;
+      color: #0d4cd3;
+      font-size: 15px;
+      margin: 10px auto 46px auto;
+      cursor: pointer;
+      outline: none;
+    }
+    .register-link {
+      color: #0d4cd3;
+      font-size: 16px;
+      margin: 46px 0 45px 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      padding: 0;
+    }
+    .info-block {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #b3c6e633;
+      max-width: 382px;
+      width: 100%;
+      margin: 0 auto 0 auto;
+      padding: 24px 28px 20px 28px;
+      box-sizing: border-box;
+      min-height: 167px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .info-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 25px;
+    }
+    .info-text {
+      font-size: 15px;
+      color: #0d4cd3;
+      text-align: left;
+      margin-top: 0;
+      line-height: 1.5;
+    }
+    .info-text-link {
+      text-decoration: none;
+      color: inherit; /* Наследуем цвет текста от родителя */
+    }
+    @media (max-width: 500px) {
+      .login-container {
+        max-width: 382px; /* Ограничиваем максимальную ширину */
+        padding: 45px 16px 0px 16px; /* Верхний отступ 45px */
+        box-sizing: border-box;
+      }
+      .info-block {
+        max-width: 382px; /* Ограничиваем максимальную ширину */
+        padding: 20px 16px 8px 16px; /* Корректируем padding info-block */
+        box-sizing: border-box;
+      }
+      .logo {
+        height: 32px;
+        margin-bottom: 20px;
+      }
+      .info-icon {
+        width: 40px; /* Увеличиваем размер иконки */
+        height: 40px; /* Увеличиваем размер иконки */
+      }
+    }
+    @media (max-width: 400px) {
+      .login-container {
+        max-width: 90vw; /* Ограничение ширины */
+        margin: 0 auto; /* Центрирование */
+        padding: 45px 4vw 0px 4vw; /* Верхний отступ 45px и vw для горизонтали */
+        box-sizing: border-box;
+      }
+      .info-block {
+        max-width: 90vw; /* Ограничение ширины */
+        margin: 0 auto; /* Центрирование */
+        padding: 20px 4vw 8px 4vw; /* Корректируем padding info-block и vw */
+        box-sizing: border-box;
+      }
+    }
+    .password-input {
+      margin-bottom: 11px;
+    }
+
+    /* Стили для модального окна */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none; /* Скрыто по умолчанию */
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #00000033;
+      max-width: 630px; /* Увеличиваем ширину модального окна */
+      width: 90%;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px 16px 24px; /* Корректируем нижний padding */
+      position: relative; /* Нужен для абсолютного позиционирования ::after */
+    }
+
+    .modal-header::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 24px; /* Отступ слева */
+      right: 24px; /* Отступ справа */
+      bottom: 0px; /* Положение линии */
+      height: 1px;
+      background-color: #eee; /* Сероватый цвет линии */
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 20px;
+      color: #0b1f33;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 30px; /* Увеличиваем размер крестика */
+      cursor: pointer;
+      color: #0d4cd3; /* Синий цвет для крестика */
+    }
+
+    .modal-content {
+      padding: 24px;
+      font-size: 15px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .modal-content ul {
+      list-style: disc;
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    .modal-content li {
+      margin-bottom: 10px;
+    }
+
+    .modal-content a {
+      color: #0d4cd3; /* Синий цвет для ссылок */
+      text-decoration: none;
+    }
+
+    .modal-content p {
+      margin-bottom: 10px;
+    }
+
+    /* Стили для модального окна "Куда ещё можно войти..." */
+    .modal-overlay-info {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none; /* Скрыто по умолчанию */
+    }
+
+    .modal-info {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #00000033;
+      max-width: 600px; /* Примерная ширина по скриншоту */
+      width: 90%;
+      overflow: hidden;
+    }
+
+    .modal-header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px 16px 24px;
+      position: relative;
+    }
+
+    .modal-title-info {
+      margin: 0;
+      font-size: 20px;
+      color: #0b1f33;
+    }
+
+    .modal-close-info {
+      background: none;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+      color: #0d4cd3;
+    }
+
+    .modal-content-info {
+      padding: 24px;
+    }
+
+    .info-section {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+
+    .info-image {
+      width: 100px; /* Примерный размер по скриншоту */
+      height: auto;
+      margin-right: 24px;
+    }
+
+    .info-text-block {
+      flex-grow: 1;
+    }
+
+    .info-text-block h4 {
+      margin: 0 0 12px 0;
+      font-size: 18px;
+      color: #0b1f33;
+    }
+
+    .info-text-block ul {
+      list-style: disc;
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .info-text-block li {
+      margin-bottom: 8px;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .input-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 18px;
+    }
+    .input-container .input {
+      margin-bottom: 0; /* Remove margin from input itself */
+      padding: 24px 18px 8px 18px; /* Adjust padding: increase top, decrease bottom */
+    }
+    .input-label {
+      position: absolute;
+      left: 18px; /* Align with input padding */
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none; /* Allow clicks to pass through to input */
+      transition: top 0.2s, font-size 0.2s, color 0.2s;
+      color: #8c8c8c; /* Initial font size and color */
+    }
+    .input-container.focused .input-label,
+    .input-container.has-text .input-label {
+      top: 8px; /* Move label up */
+      font-size: 12px; /* Smaller font size */
+      color: #8c8c8c; /* Keep initial color */
+      transform: translateY(0%); /* Reset transform */
+    }
+    /* Specific margin for the first input container */
+    .login-container .input-container:first-child {
+        margin-bottom: 21px; /* Match previous first-input margin */
+    }
+    /* Specific margin for the password input container (was password-input class) */
+    /* Removed password-specific margin as it's not needed on register page */
+    .password-toggle-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      background-image: url('smooth_icon.svg'); /* Иконка закрытого глаза из файла */
+      background-size: cover;
+      opacity: 0.5; /* Можно убрать opacity, если не нужно */
+      display: none; /* Изначально скрываем */
+    }
+    .password-toggle-icon.active {
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM2MzYzNjMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIzIi8+PHBhdGggZD0iTTIgMTIgczQgNyAxMCA3IDEwLTcgMTAtNyAwIDAuNzctMS44LTEuODk0QzE1LjE2IDcuNTggMTMuNSA2IDEyIDZzLTMuMTYgMS41OC02LjExIDQuMTMyQzIuNzcgMTEuMjMgMiAxMiAyIDEyIi8+PC9zdmc+'); /* Иконка открытого глаза (временная base64) */
+      opacity: 1; /* Можно убрать opacity, если не нужно */
+    }
+
+    /* Стили для кнопки "Продолжить" на странице регистрации */
+    .register-proceed-btn {
+        width: 100%;
+        background: #0d4cd3;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 16px 0;
+        font-size: 16px;
+        font-weight: 400;
+        cursor: pointer;
+        margin-top: 10px; /* Adjust margin top */
+        margin-bottom: 20px; /* Adjust margin bottom */
+        transition: background 0.2s;
+    }
+    .register-proceed-btn:hover {
+        background: #0b3bb3;
+    }
+
+    /* Стили для текста соглашения */
+    .agreement-text {
+        font-size: 13px;
+        color: #555;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .agreement-text a {
+        color: #0d4cd3;
+        text-decoration: none;
+    }
+
+    /* Стили для кнопки Назад */
+    .back-button {
+        position: absolute;
+        top: 20px; /* Adjust position as needed */
+        left: 20px; /* Adjust position as needed */
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 24px; /* Adjust size as needed */
+        color: #0d4cd3; /* Adjust color as needed */
+    }
+
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <button class="back-button">&lt;</button> <!-- Кнопка Назад -->
+    <img src="logo.4db68cf668f7092d.svg" alt="Госуслуги" class="logo">
+    <h2>Регистрация</h2> <!-- Заголовок Регистрация -->
+
+    <!-- Поля ввода для регистрации -->
+    <div class="input-container">
+      <input class="input" type="text" placeholder=" " autocomplete="off">
+      <label class="input-label">Фамилия</label>
+    </div>
+    <div class="input-container">
+      <input class="input" type="text" placeholder=" " autocomplete="off">
+      <label class="input-label">Имя</label>
+    </div>
+    <div class="input-container">
+      <input class="input" type="tel" placeholder=" " autocomplete="off">
+      <label class="input-label">Мобильный телефон</label>
+    </div>
+     <div class="input-container">
+      <input class="input" type="email" placeholder=" " autocomplete="off">
+      <label class="input-label">Email</label>
+    </div>
+
+    <!-- Кнопка Продолжить -->
+    <button class="register-proceed-btn">Продолжить</button>
+
+    <!-- Текст соглашения -->
+    <p class="agreement-text">Нажимая "Продолжить", вы соглашаетесь с <a href="#">Условиями использования</a> и <a href="#">Политикой конфиденциальности</a></p>
+
+  </div>
+
+  <!-- Информационный блок -->
+  <div class="info-block">
+    <img src="content/Banner/Esia_a1.svg" alt="info" class="info-icon">
+    <div class="info-text">Куда ещё можно войти с паролем от Госуслуг?</div>
+  </div>
+
+  <!-- Модальное окно "Куда ещё можно войти..." -->
+  <div class="modal-overlay-info">
+    <div class="modal-info">
+      <div class="modal-header-info">
+        <h3 class="modal-title-info">Один аккаунт для сайтов партнёров</h3>
+        <button class="modal-close-info">&times;</button>
+      </div>
+      <div class="modal-content-info">
+        <div class="info-section">
+          <img src="clock.svg" alt="Часы" class="info-image">
+          <div class="info-text-block">
+            <h4>Просто и быстро</h4>
+            <ul>
+              <li>Вход на сайты партнёров под одним аккаунтом</li>
+              <li>Быстрая авторизация по кнопке «Войти через Госуслуги»</li>
+              <li>Не надо проходить регистрацию и запоминать пароли</li>
+            </ul>
+          </div>
+        </div>
+        <div class="info-section">
+          <img src="cyber_helmet.svg" alt="Шлем" class="info-image">
+          <div class="info-text-block">
+            <h4>Безопасно</h4>
+            <ul>
+              <li>Настройка входа с дополнительным способом подтверждения</li>
+              <li>Гарантия соответствия требованиям законодательства о защите персональных данных</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Логика для кнопки Назад
+  const backButton = document.querySelector('.back-button');
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      history.back(); // Возвращаемся на предыдущую страницу
+    });
+  }
+
+  // Логика для меток полей ввода (из index.html)
+  const inputContainers = document.querySelectorAll('.input-container');
+
+  inputContainers.forEach(container => {
+    const input = container.querySelector('.input');
+    const label = container.querySelector('.input-label');
+
+    input.addEventListener('focus', () => {
+      container.classList.add('focused');
+    });
+
+    input.addEventListener('blur', () => {
+      container.classList.remove('focused');
+    });
+
+    input.addEventListener('input', () => {
+      if (input.value.length > 0) {
+        container.classList.add('has-text');
+      } else {
+        container.classList.remove('has-text');
+      }
+    });
+
+    // Проверяем при загрузке страницы, если поле уже содержит текст
+    if (input.value.length > 0) {
+      container.classList.add('has-text');
+    }
+  });
+
+  // Логика для модального окна "Куда ещё можно войти..." (скопировано из index.html)
+  const infoTextLink = document.querySelector('.info-text'); // Изменяем селектор на div с текстом
+  const modalOverlayInfo = document.querySelector('.modal-overlay-info');
+  const closeModalButtonInfo = document.querySelector('.modal-close-info');
+
+  if (infoTextLink && modalOverlayInfo && closeModalButtonInfo) {
+    infoTextLink.addEventListener('click', (e) => {
+      // Если информационный текст обернут в ссылку, предотвращаем переход по ссылке
+      if (e.target.tagName === 'A') {
+         e.preventDefault();
+      }
+      modalOverlayInfo.style.display = 'flex'; // Показываем модальное окно
+    });
+
+    closeModalButtonInfo.addEventListener('click', () => {
+      modalOverlayInfo.style.display = 'none'; // Скрываем модальное окно по крестику
+    });
+
+    // Скрываем модальное окно при клике вне контента модального окна
+    modalOverlayInfo.addEventListener('click', (e) => {
+      if (e.target === modalOverlayInfo) {
+        modalOverlayInfo.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+</body>
+</html> 

