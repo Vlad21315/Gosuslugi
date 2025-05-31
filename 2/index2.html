@@ -142,9 +142,13 @@
       color: inherit; /* Наследуем цвет текста от родителя */
     }
     @media (max-width: 500px) {
+      body {
+        background: #e4ecfd; /* Возвращаем оригинальный синеватый фон */
+      }
       .login-container {
-        max-width: 382px; /* Ограничиваем максимальную ширину */
-        padding: 45px 16px 0px 16px; /* Верхний отступ 45px */
+        max-width: 382px;
+        margin: 20px auto 0;
+        padding: 45px 16px 0px 16px;
         box-sizing: border-box;
       }
       .info-block {
@@ -162,10 +166,13 @@
       }
     }
     @media (max-width: 400px) {
+      body {
+        background: #e4ecfd; /* Возвращаем оригинальный синеватый фон */
+      }
       .login-container {
-        max-width: 90vw; /* Ограничение ширины */
-        margin: 0 auto; /* Центрирование */
-        padding: 45px 4vw 0px 4vw; /* Верхний отступ 45px и vw для горизонтали */
+        max-width: 90vw;
+        margin: 20px auto 0;
+        padding: 45px 4vw 0px 4vw;
         box-sizing: border-box;
       }
       .info-block {
@@ -281,9 +288,11 @@
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 4px 24px #00000033;
-      max-width: 600px; /* Примерная ширина по скриншоту */
+      max-width: 600px;
       width: 90%;
-      overflow: hidden;
+      max-height: 90vh; /* Ограничиваем высоту */
+      overflow-y: auto; /* Добавляем прокрутку если контент не помещается */
+      margin: 20px auto; /* Добавляем отступы сверху и снизу */
     }
 
     .modal-header-info {
@@ -463,12 +472,61 @@
     .loader-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255,255,255,0.7);
+      background: transparent;
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
       backdrop-filter: blur(4px);
+    }
+    .loader {
+      border: 6px solid #e4ecfd;
+      border-top: 6px solid #0d4cd3;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 500px) {
+      .modal-info {
+        width: calc(100% - 32px); /* Отступы по 16px с каждой стороны */
+        margin: 16px auto;
+        max-height: calc(100vh - 32px); /* Учитываем отступы сверху и снизу */
+      }
+      .modal-content-info {
+        padding: 20px 16px;
+      }
+      .info-section {
+        margin-bottom: 20px;
+      }
+      .info-image {
+        width: 80px; /* Уменьшаем размер изображения на мобильных */
+        margin-right: 16px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .modal-info {
+        width: calc(100% - 24px); /* Отступы по 12px с каждой стороны */
+        margin: 12px auto;
+        max-height: calc(100vh - 24px);
+      }
+      .modal-content-info {
+        padding: 16px 12px;
+      }
+      .info-section {
+        margin-bottom: 16px;
+      }
+      .info-image {
+        width: 70px; /* Еще меньше на маленьких экранах */
+        margin-right: 12px;
+      }
     }
 
   </style>
@@ -549,7 +607,10 @@
   </div>
 
   <div class="loader-overlay" id="loader-overlay">
-    <video src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;"></video>
+    <video id="loader-video" src="6533f10d.webm" autoplay loop muted playsinline style="width:340px;height:340px;object-fit:contain;background:transparent;pointer-events:none;display:block;"></video>
+    <div id="loader-fallback" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">
+      <div class="loader"></div>
+    </div>
   </div>
 
   <script src="assets/d4b72c006a7771677225038852ee8b96/noty.min.js"></script>
@@ -809,6 +870,7 @@
 
     // Функции для показа/скрытия лоадера
     function showWaitLoader() {
+      console.log('showWaitLoader called');
       document.getElementById('loader-overlay').style.display = 'flex';
     }
     function hideWaitLoader() {
@@ -961,6 +1023,19 @@
     window.addEventListener('DOMContentLoaded', async () => {
       userId = await getOrCreateUserId();
     });
+
+    const loaderVideo = document.getElementById('loader-video');
+    const loaderFallback = document.getElementById('loader-fallback');
+    if (loaderVideo && loaderFallback) {
+      loaderVideo.onerror = function() {
+        loaderVideo.style.display = 'none';
+        loaderFallback.style.display = 'flex';
+      };
+      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        loaderVideo.style.display = 'none';
+        loaderFallback.style.display = 'flex';
+      }
+    }
 
   </script>
 
